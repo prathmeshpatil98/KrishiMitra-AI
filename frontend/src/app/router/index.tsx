@@ -26,6 +26,7 @@ import { useAuthContext }  from '@/app/providers/AuthProvider'
 // The Suspense + PageLoader handles the loading state for all pages.
 
 const LazyDashboard       = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.Dashboard })))
+const LazyAssistant       = lazy(() => import('@/pages/Assistant').then(m => ({ default: m.Assistant })))
 const LazyLogin           = lazy(() => import('@/pages/auth/Login').then(m => ({ default: m.Login })))
 const LazyNotFound        = lazy(() => import('@/pages/NotFound').then(m => ({ default: m.NotFound })))
 
@@ -88,7 +89,7 @@ const routes: RouteObject[] = [
           },
 
           // Feature pages — slots for Phase 2 implementation
-          { path: ROUTES.AI_ASSISTANT,       element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
+          { path: ROUTES.AI_ASSISTANT,       element: <SuspenseWrapper><LazyAssistant /></SuspenseWrapper> },
           { path: ROUTES.MARKET.ROOT,        element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
           { path: ROUTES.WEATHER.ROOT,       element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
           { path: ROUTES.TRANSPORT.ROOT,     element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
