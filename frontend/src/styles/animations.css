@@ -1,0 +1,79 @@
+/*
+ * KrishiMitra AI — Shared Keyframe Animations
+ * =============================================
+ * All animation keyframes live here.
+ * Components reference these via Tailwind's animation utilities
+ * or Framer Motion variants. Never define keyframes inline.
+ */
+
+/* Shimmer — skeleton loading */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* Fade in + slide up — page/card entrance */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Slide in from left — sidebar items */
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Slide in from right — drawer, chat messages */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Scale in — modal / dialog entrance */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Pulse glow — AI thinking indicator */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(46,125,50,0.25); }
+  50%       { box-shadow: 0 0 24px rgba(46,125,50,0.65); }
+}
+
+/* Typing cursor blink — chat streaming */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Spin — loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Count up — animated numbers */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger children helper — used via Framer Motion stagger */
+@keyframes stagger-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Notification badge bounce */
+@keyframes badge-bounce {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+/* AI dot wave */
+@keyframes wave {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1; }
+}

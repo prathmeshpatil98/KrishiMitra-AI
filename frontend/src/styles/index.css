@@ -1,0 +1,241 @@
+/*
+ * KrishiMitra AI — Global Design Tokens & Base Styles
+ * =====================================================
+ * All CSS custom properties (design tokens) for the KrishiMitra AI design system.
+ * Every component consumes these tokens — never hardcode hex values in components.
+ *
+ * Dark mode: add class="dark" to <html> via ThemeProvider.
+ */
+
+/* ── Google Fonts ────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────
+   Design Tokens — Light Mode
+────────────────────────────────────────────────────────────── */
+:root {
+  /* Brand */
+  --color-primary:     #2E7D32;
+  --color-primary-hover: #236126;
+  --color-secondary:   #81C784;
+  --color-accent:      #F9A825;
+  --color-accent-hover: #E89A1B;
+
+  /* Semantic */
+  --color-success:  #16A34A;
+  --color-danger:   #DC2626;
+  --color-warning:  #D97706;
+  --color-info:     #2563EB;
+
+  /* Surface */
+  --color-background: #F7F9F5;
+  --color-surface:    #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-sidebar:    #1F2937;
+  --color-sidebar-item-hover: rgba(255,255,255,0.08);
+  --color-sidebar-item-active: rgba(46,125,50,0.25);
+
+  /* Text */
+  --color-text-primary:   #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-muted:     #9CA3AF;
+  --color-text-inverse:   #FFFFFF;
+  --color-text-on-sidebar:#D1FAE5;
+
+  /* Border */
+  --color-border:        #E5E7EB;
+  --color-border-focus:  #2E7D32;
+  --color-border-error:  #DC2626;
+
+  /* Shadows */
+  --shadow-card:      0 4px 24px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.12);
+  --shadow-float:     0 16px 64px rgba(0,0,0,0.16);
+  --shadow-glow:      0 0 20px rgba(46,125,50,0.35);
+
+  /* Border radius */
+  --radius-card:   16px;
+  --radius-btn:    12px;
+  --radius-input:  12px;
+  --radius-dialog: 20px;
+  --radius-badge:  6px;
+
+  /* Layout */
+  --sidebar-width:           280px;
+  --sidebar-collapsed-width: 72px;
+  --navbar-height:           72px;
+
+  /* Transitions */
+  --transition-fast:   150ms ease-out;
+  --transition-normal: 250ms ease-out;
+  --transition-slow:   350ms ease-out;
+
+  /* Backdrop */
+  --backdrop-blur: blur(12px);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Design Tokens — Dark Mode
+────────────────────────────────────────────────────────────── */
+.dark {
+  --color-primary:       #4ADE80;
+  --color-primary-hover: #34D058;
+  --color-secondary:     #166534;
+  --color-accent:        #F9A825;
+
+  --color-background:  #0F1117;
+  --color-surface:     #1A1F2E;
+  --color-surface-raised: #232838;
+  --color-sidebar:     #111827;
+  --color-sidebar-item-hover:  rgba(255,255,255,0.06);
+  --color-sidebar-item-active: rgba(74,222,128,0.15);
+
+  --color-text-primary:   #F9FAFB;
+  --color-text-secondary: #9CA3AF;
+  --color-text-muted:     #6B7280;
+  --color-text-on-sidebar:#D1FAE5;
+
+  --color-border:       #2D3748;
+  --color-border-focus: #4ADE80;
+
+  --shadow-card:      0 4px 24px rgba(0,0,0,0.3);
+  --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.5);
+  --shadow-float:     0 16px 64px rgba(0,0,0,0.6);
+  --shadow-glow:      0 0 20px rgba(74,222,128,0.3);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Base Reset & Defaults
+────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+    min-height: 100vh;
+  }
+
+  /* Focus ring — accessible, non-default */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove focus ring for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Scrollbar — subtle, consistent */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(46,125,50,0.2);
+    color: var(--color-text-primary);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Reusable Component Layer Classes
+────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Glass morphism surface */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .dark .glass {
+    background: rgba(26, 31, 46, 0.7);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Page container */
+  .page-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-border) 25%,
+      rgba(255,255,255,0.5) 50%,
+      var(--color-border) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+    border-radius: var(--radius-input);
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(45,55,72,1) 25%,
+      rgba(74,85,104,0.5) 50%,
+      rgba(45,55,72,1) 75%
+    );
+    background-size: 200% 100%;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Utility Layer
+────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

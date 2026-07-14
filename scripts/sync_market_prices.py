@@ -1,0 +1,1 @@
+# Sync market prices script
