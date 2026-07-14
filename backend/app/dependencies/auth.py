@@ -80,25 +80,32 @@ async def get_current_user(
     return CurrentUser(payload)
 
 
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.dependencies.database import get_db
+from app.repositories.user import UserRepository
+
 async def get_current_active_user(
     current_user: CurrentUser = Depends(get_current_user),  # noqa: B008
+    db: AsyncSession = Depends(get_db),
 ) -> CurrentUser:
     """
-    Extends get_current_user by verifying the user account is still active.
-
-    In a full implementation, this would query the database to confirm
-    the user's is_active status. That check is added when the User model
-    and UserRepository are implemented.
-
-    Args:
-        current_user: Injected from get_current_user dependency.
-
-    Returns:
-        CurrentUser: The same object if the user is active.
-
-    Raises:
-        AuthenticationError: If the user account has been deactivated.
+    Extends get_current_user by verifying the user account is still active and exists.
     """
-    # TODO(phase-2): Query UserRepository to verify is_active and not soft-deleted.
-    # Stubbed here — will be completed when the User feature module is generated.
+    try:
+        repo = UserRepository(db)
+        user = await repo.get(current_user.user_id)
+        if not user or not user.is_active or user.deleted_at is not None:
+            raise AuthenticationError(
+                "User account is inactive or has been deactivated.",
+                error_code="INACTIVE_USER",
+            )
+    except Exception as e:
+        if isinstance(e, AuthenticationError):
+            raise e
+        logger.error("get_current_active_user_db_error", error=str(e))
+        # Fail safe: if database has a connection issue, we do not bypass authentication checks
+        raise AuthenticationError(
+            "Authentication failed due to system verification errors.",
+            error_code="AUTH_DB_ERROR",
+        )
     return current_user
