@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Wind, Droplets, Thermometer, CloudRain, Sun, Zap, Gauge } from 'lucide-react'
 import { apiClient } from '@/services/api/client'
 import { API_ENDPOINTS } from '@/constants/api'
+import { useLanguage } from '@/app/providers/LanguageProvider'
 
 // Subcomponents
 import { ForecastGrid } from '@/features/weather/components/ForecastGrid'
@@ -171,6 +172,7 @@ function AnimatedCounter({ value, suffix = "" }: { value: number; suffix?: strin
 type ChartMetric = 'temp' | 'rain' | 'humidity' | 'wind'
 
 export function Weather() {
+  const { t } = useLanguage()
   const [forecast, setForecast] = useState<ForecastItem[]>(MOCK_FORECAST)
   const [selectedIdx, setSelectedIdx] = useState(0)
   const [activeChartMetric, setActiveChartMetric] = useState<ChartMetric>('temp')
@@ -206,7 +208,7 @@ export function Weather() {
       }
     return {
       level: 'OPTIMAL',
-      color: 'border-emerald-500/15 bg-[#0e1711] text-emerald-450',
+      color: 'border-emerald-500/15 bg-[#0e1711] text-emerald-400',
       bar: 'bg-[#2ECC71]',
       w: '20%',
       tip: 'Optimal harvest and sowing conditions verified.',
@@ -234,7 +236,7 @@ export function Weather() {
       }
     return {
       level: 'OPTIMAL',
-      color: 'border-emerald-500/15 bg-[#0e1711] text-emerald-450',
+      color: 'border-emerald-500/15 bg-[#0e1711] text-emerald-400',
       bar: 'bg-[#2ECC71]',
       w: '20%',
       tip: 'Clear transport corridors. Optimal dispatch conditions verified.',
@@ -320,13 +322,13 @@ export function Weather() {
           >
             <p className="text-[#43F59A] text-[10px] font-black uppercase tracking-[0.25em] mb-4.5 flex items-center gap-2 font-mono">
               <span className="w-1.5 h-1.5 bg-[#43F59A] rounded-full animate-ping" />
-              HYPERLOCAL CLIMATE INTELLIGENCE
+              {t('weather_title')}
             </p>
             <h1 className="text-white tracking-tight leading-[1.05] text-[3.2rem] sm:text-[4.2rem] font-extrabold uppercase bg-gradient-to-r from-[#F5F7F6] via-[#F5F7F6] to-[#A7B1AC] bg-clip-text text-transparent">
-              Climate Intelligence
+              {t('weather_title')}
             </h1>
             <p className="text-[#A7B1AC] text-[15.5px] font-medium max-w-xl leading-relaxed mt-4">
-              AI-powered hyperlocal weather forecasts, predictive climate analytics, harvest planning, transport risk analysis, and soil intelligence for precision farming.
+              {t('weather_subtitle')}
             </p>
           </motion.div>
         </div>

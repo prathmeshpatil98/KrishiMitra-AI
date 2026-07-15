@@ -55,7 +55,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (storedToken && storedUser && storedRefresh) {
       try {
-        setUser(JSON.parse(storedUser) as User)
+        const parsedUser = JSON.parse(storedUser) as User
+        if (parsedUser?.farmer_profile?.full_name === 'Rajesh Kumar') {
+          parsedUser.farmer_profile.full_name = 'Pratiksha Tiwari'
+          sessionStorage.setItem(CACHE_KEYS.USER, JSON.stringify(parsedUser))
+        }
+        setUser(parsedUser)
         setTokens({
           access_token:  storedToken,
           refresh_token: storedRefresh,

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp } from 'lucide-react'
+import { useLanguage } from '@/app/providers/LanguageProvider'
 
 interface PriceChartProps {
   prices: number[]
   cropName: string
   mandiName?: string
-  isMarathi?: boolean
 }
 
 const LOCAL_LABELS = {
@@ -23,12 +23,21 @@ const LOCAL_LABELS = {
     rate: "बाजार भाव",
     week: "आठवडा",
     footerText: "FRP आधारभूत किंमती वधारत आहेत · एगमार्कनेट प्रमाणित",
+  },
+  hi: {
+    rateTrend: "दर रुझान (Trend)",
+    subLabel: "ऐतिहासिक बाजार भावों का ग्राफ़",
+    rate: "बाजार भाव",
+    week: "सप्ताह",
+    footerText: "FRP आधारभूत दरें बढ़ रही हैं · एगमार्कनेट प्रमाणित",
   }
 }
 
-export function PriceChart({ prices, cropName, mandiName, isMarathi = false }: PriceChartProps) {
+export function PriceChart({ prices, cropName, mandiName }: PriceChartProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
-  const labels = isMarathi ? LOCAL_LABELS.mr : LOCAL_LABELS.en
+  const { language } = useLanguage()
+  const lang = language === 'mr' ? 'mr' : language === 'hi' ? 'hi' : 'en'
+  const labels = LOCAL_LABELS[lang]
 
   const cW = 500
   const cH = 180
@@ -43,7 +52,7 @@ export function PriceChart({ prices, cropName, mandiName, isMarathi = false }: P
   const pts = prices.map((p, i) => {
     const x = padX + i * ((cW - padX * 2) / (prices.length - 1))
     const y = cH - padY - ((p - minP) / range) * (cH - padY * 2)
-    return { x, y, price: p, label: isMarathi ? `${labels.week} ${i + 1}` : `Week ${i + 1}` }
+    return { x, y, price: p, label: language === 'mr' ? `${labels.week} ${i + 1}` : language === 'hi' ? `${labels.week} ${i + 1}` : `Week ${i + 1}` }
   })
 
   const poly = pts.map((p) => `${p.x},${p.y}`).join(' ')

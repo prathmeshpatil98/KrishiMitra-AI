@@ -12,7 +12,6 @@ from typing import Any, List, Optional
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.exceptions import NotFoundError
 from app.models.user import User, FarmerProfile
 from app.repositories.base import AbstractRepository
 
@@ -24,39 +23,31 @@ class UserRepository(AbstractRepository[User]):
 
     model = User
 
-    async def get_by_email(self, email: str, include_deleted: bool = False) -> User:
+    async def get_by_email(self, email: str, include_deleted: bool = False) -> Optional[User]:
         """
         Lookup a user by email address.
+
+        Returns None if no matching user is found.
         """
         stmt = select(self.model).where(self.model.email == email)
         if not include_deleted:
             stmt = stmt.where(self.model.deleted_at.is_(None))
 
         result = await self._session.execute(stmt)
-        user = result.scalar_one_or_none()
-        if not user:
-            raise NotFoundError(
-                f"User with email '{email}' was not found.",
-                error_code="USER_NOT_FOUND",
-            )
-        return user
+        return result.scalar_one_or_none()
 
-    async def get_by_phone(self, phone: str, include_deleted: bool = False) -> User:
+    async def get_by_phone(self, phone: str, include_deleted: bool = False) -> Optional[User]:
         """
         Lookup a user by phone number.
+
+        Returns None if no matching user is found.
         """
         stmt = select(self.model).where(self.model.phone == phone)
         if not include_deleted:
             stmt = stmt.where(self.model.deleted_at.is_(None))
 
         result = await self._session.execute(stmt)
-        user = result.scalar_one_or_none()
-        if not user:
-            raise NotFoundError(
-                f"User with phone '{phone}' was not found.",
-                error_code="USER_NOT_FOUND",
-            )
-        return user
+        return result.scalar_one_or_none()
 
     async def search(self, query: str, **filters: Any) -> List[User]:
         """

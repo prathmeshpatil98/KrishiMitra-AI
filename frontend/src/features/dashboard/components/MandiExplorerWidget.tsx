@@ -58,8 +58,13 @@ export function MandiExplorerWidget({
   const poly = pts.map((p) => `${p.x},${p.y}`).join(' ')
 
   return (
-    <section id="market" className="w-full py-24 bg-[#08120E] border-b border-white/[0.04] relative">
-      <div className="w-full max-w-7xl mx-auto px-6 sm:px-8">
+    <section id="market" className="w-full py-24 bg-[#08120E] border-b border-white/[0.04] relative overflow-hidden">
+      {/* Aurora blobs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[10%] left-[-5%] w-[40vw] h-[40vw] rounded-full blur-[140px] opacity-50" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', animation: 'aurora-drift-1 20s ease-in-out infinite' }} />
+        <div className="absolute bottom-[5%] right-[-5%] w-[35vw] h-[35vw] rounded-full blur-[140px] opacity-50" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 70%)', animation: 'aurora-drift-2 18s ease-in-out infinite' }} />
+      </div>
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
         
         {/* Section Header */}
         <motion.div
@@ -69,12 +74,13 @@ export function MandiExplorerWidget({
           transition={{ duration: 0.6 }}
           className="flex flex-col gap-2.5 mb-14 text-left"
         >
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#2ECC71]/10 border border-[#2ECC71]/20 text-[#43F59A] text-[10px] font-black uppercase tracking-[0.2em] w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#43F59A] animate-pulse" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-[0.2em] w-fit shadow-[0_0_14px_rgba(245,158,11,0.12)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             Market Analytics
           </div>
           <h2 className="font-display text-white tracking-tight leading-none text-[2.2rem] sm:text-[2.8rem] font-black uppercase">
-            Market Price Index
+            Market{' '}
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(90deg, #fbbf24, #34d399)', backgroundSize: '200% 100%', animation: 'gradient-shift 5s ease infinite' }}>Price Index</span>
           </h2>
         </motion.div>
 
@@ -83,6 +89,11 @@ export function MandiExplorerWidget({
           <div className="flex gap-2">
             {(['Sugarcane', 'Paddy', 'Soybean'] as CropKey[]).map((c) => {
               const isActive = crop === c
+              const tabColor = c === 'Sugarcane'
+                ? isActive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.15)]' : 'text-zinc-400 hover:text-emerald-300 border-transparent'
+                : c === 'Paddy'
+                ? isActive ? 'text-sky-400 bg-sky-500/10 border-sky-500/25 shadow-[0_0_12px_rgba(14,165,233,0.15)]' : 'text-zinc-400 hover:text-sky-300 border-transparent'
+                : isActive ? 'text-amber-400 bg-amber-500/10 border-amber-500/25 shadow-[0_0_12px_rgba(245,158,11,0.15)]' : 'text-zinc-400 hover:text-amber-300 border-transparent'
               return (
                 <button
                   key={c}
@@ -90,9 +101,7 @@ export function MandiExplorerWidget({
                     setCrop(c)
                     setSelectedMandiId(c === 'Sugarcane' ? '1' : c === 'Paddy' ? '4' : '6')
                   }}
-                  className={`px-4 py-2 rounded-xl text-[13px] font-bold transition-all duration-200 cursor-pointer relative ${
-                    isActive ? 'text-[#43F59A] bg-white/[0.03] border border-white/[0.06]' : 'text-zinc-400 hover:text-white border border-transparent'
-                  }`}
+                  className={`px-4 py-2 rounded-xl text-[13px] font-bold transition-all duration-200 cursor-pointer border ${tabColor}`}
                 >
                   {c}
                 </button>
@@ -238,9 +247,14 @@ export function MandiExplorerWidget({
               <svg viewBox={`0 0 ${cW} ${cH}`} className="w-full overflow-visible select-none">
                 <defs>
                   <linearGradient id="chartGradientDark" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2ECC71" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#2ECC71" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#34d399" stopOpacity="0.35" />
+                    <stop offset="60%" stopColor="#fbbf24" stopOpacity="0.10" />
+                    <stop offset="100%" stopColor="#34d399" stopOpacity="0" />
                   </linearGradient>
+                  <filter id="lineGlow">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
                 </defs>
 
                 {/* Grid lines */}
@@ -264,16 +278,22 @@ export function MandiExplorerWidget({
                   fill="url(#chartGradientDark)"
                 />
 
-                {/* Line Path */}
+                {/* Line Path with glow */}
                 <polyline
                   fill="none"
-                  stroke="currentColor"
+                  stroke="url(#lineGrad)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   points={poly}
-                  className="text-[#43F59A]"
+                  filter="url(#lineGlow)"
                 />
+                <defs>
+                  <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#34d399" />
+                    <stop offset="100%" stopColor="#fbbf24" />
+                  </linearGradient>
+                </defs>
 
                 {/* Interactive coordinate points */}
                 {pts.map((p, i) => (
@@ -332,7 +352,8 @@ export function MandiExplorerWidget({
         <div className="mt-12 text-center">
           <button
             onClick={() => navigate(ROUTES.MARKET.ROOT)}
-            className="px-6 py-3.5 rounded-xl font-black uppercase text-[11px] tracking-wider border border-white/[0.08] bg-white/[0.02] hover:bg-[#2ECC71] hover:text-[#08120E] text-white flex items-center gap-2 mx-auto transition-all group duration-300"
+            className="px-6 py-3.5 rounded-xl font-black uppercase text-[11px] tracking-wider text-[#08120E] flex items-center gap-2 mx-auto transition-all group duration-300 hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(16,185,129,0.35)] active:scale-[0.98] cursor-pointer"
+            style={{ background: 'linear-gradient(90deg, #34d399, #fbbf24)', backgroundSize: '200% 100%', animation: 'gradient-shift 5s ease infinite', boxShadow: '0 4px 20px rgba(16,185,129,0.2)' }}
           >
             Explore Market Dynamics
             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />

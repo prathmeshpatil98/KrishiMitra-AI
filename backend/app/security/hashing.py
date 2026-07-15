@@ -48,6 +48,11 @@ class PasswordHasher:
         return _pwd_context.hash(plain_password)
 
     @classmethod
+    def hash_password(cls, plain_password: str) -> str:
+        """Alias for hash() to preserve calling code compatibility."""
+        return cls.hash(plain_password)
+
+    @classmethod
     def verify(cls, plain_password: str, hashed_password: str) -> bool:
         """
         Verify a plain-text password against a stored bcrypt hash.
@@ -63,6 +68,11 @@ class PasswordHasher:
         if not plain_password or not hashed_password:
             return False
         return _pwd_context.verify(plain_password, hashed_password)
+
+    @classmethod
+    def verify_password(cls, plain_password: str, hashed_password: str) -> bool:
+        """Alias for verify() to preserve calling code compatibility."""
+        return cls.verify(plain_password, hashed_password)
 
     @classmethod
     def needs_rehash(cls, hashed_password: str) -> bool:

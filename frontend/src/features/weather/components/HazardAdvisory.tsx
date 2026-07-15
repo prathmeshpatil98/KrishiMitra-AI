@@ -17,16 +17,16 @@ interface HazardAdvisoryProps {
 
 const REGIONAL_HEATMAP = {
   dry: [
-    { area: 'Karveer (Central)', rain: '15%', density: 'Low', color: 'text-emerald-450' },
-    { area: 'Kagal (South Corridor)', rain: '12%', density: 'Low', color: 'text-emerald-450' },
-    { area: 'Radhanagari (Western Ghats)', rain: '45%', density: 'Medium', color: 'text-amber-450' },
-    { area: 'Panhala (Elevation Highlands)', rain: '30%', density: 'Medium', color: 'text-amber-450' },
+    { area: 'Karveer (Central)', rain: '15%', density: 'Low', color: 'text-emerald-400' },
+    { area: 'Kagal (South Corridor)', rain: '12%', density: 'Low', color: 'text-emerald-400' },
+    { area: 'Radhanagari (Western Ghats)', rain: '45%', density: 'Medium', color: 'text-amber-400' },
+    { area: 'Panhala (Elevation Highlands)', rain: '30%', density: 'Medium', color: 'text-amber-400' },
   ],
   wet: [
-    { area: 'Karveer (Central)', rain: '70%', density: 'High', color: 'text-rose-455' },
-    { area: 'Kagal (South Corridor)', rain: '65%', density: 'High', color: 'text-rose-455' },
+    { area: 'Karveer (Central)', rain: '70%', density: 'High', color: 'text-rose-400' },
+    { area: 'Kagal (South Corridor)', rain: '65%', density: 'High', color: 'text-rose-400' },
     { area: 'Radhanagari (Western Ghats)', rain: '95%', density: 'Critical', color: 'text-red-500 font-black animate-pulse' },
-    { area: 'Panhala (Elevation Highlands)', rain: '80%', density: 'High', color: 'text-rose-455' },
+    { area: 'Panhala (Elevation Highlands)', rain: '80%', density: 'High', color: 'text-rose-400' },
   ]
 }
 

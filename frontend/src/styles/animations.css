@@ -38,8 +38,14 @@
 
 /* Pulse glow — AI thinking indicator */
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 6px rgba(46,125,50,0.25); }
-  50%       { box-shadow: 0 0 24px rgba(46,125,50,0.65); }
+  0%, 100% { box-shadow: 0 0 6px rgba(46,204,113,0.25); }
+  50%       { box-shadow: 0 0 32px rgba(46,204,113,0.75), 0 0 64px rgba(46,204,113,0.25); }
+}
+
+/* Gold glow — price up indicator */
+@keyframes pulse-glow-gold {
+  0%, 100% { box-shadow: 0 0 4px rgba(245,158,11,0.2); }
+  50%       { box-shadow: 0 0 24px rgba(245,158,11,0.65), 0 0 48px rgba(245,158,11,0.2); }
 }
 
 /* Typing cursor blink — chat streaming */
@@ -77,3 +83,92 @@
   0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
   40%            { transform: scale(1);   opacity: 1; }
 }
+
+/* ── NEW: Premium Visual Keyframes ─────────────────────────── */
+
+/* Aurora blob drift — background glow orbs */
+@keyframes aurora-drift-1 {
+  0%   { transform: translate(0%, 0%)   scale(1);    }
+  33%  { transform: translate(4%, -6%)  scale(1.08); }
+  66%  { transform: translate(-3%, 4%)  scale(0.96); }
+  100% { transform: translate(0%, 0%)   scale(1);    }
+}
+@keyframes aurora-drift-2 {
+  0%   { transform: translate(0%, 0%)   scale(1);    }
+  33%  { transform: translate(-5%, 3%)  scale(1.06); }
+  66%  { transform: translate(4%, -5%)  scale(0.97); }
+  100% { transform: translate(0%, 0%)   scale(1);    }
+}
+@keyframes aurora-drift-3 {
+  0%   { transform: translate(0%, 0%)   scale(1);    }
+  50%  { transform: translate(3%, 5%)   scale(1.1);  }
+  100% { transform: translate(0%, 0%)   scale(1);    }
+}
+
+/* Shine sweep — card hover shimmer */
+@keyframes shine-sweep {
+  0%   { left: -100%; opacity: 0;   }
+  10%  { opacity: 0.4; }
+  100% { left: 200%;  opacity: 0;   }
+}
+
+/* Gradient text shift — animated gradient text */
+@keyframes gradient-shift {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Bar grow — animated chart bar fill */
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Float bob — subtle vertical floating */
+@keyframes float-bob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Orbit slow — slow circular badge movement */
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+/* Price ticker color pulse — market data update */
+@keyframes price-flash-green {
+  0%   { color: #43F59A; background: rgba(46,204,113,0.15); }
+  100% { color: inherit; background: transparent; }
+}
+@keyframes price-flash-red {
+  0%   { color: #f87171; background: rgba(239,68,68,0.15); }
+  100% { color: inherit; background: transparent; }
+}
+
+/* Typing dots — loading sequence */
+@keyframes typing-dot {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  50%       { opacity: 1;   transform: translateY(-4px); }
+}
+
+/* Number roll — stat counter */
+@keyframes number-roll {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0%);   opacity: 1; }
+}
+
+/* Border trace — animated card border */
+@keyframes border-trace {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* Appear from bottom with spring */
+@keyframes spring-up {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.97); }
+  60%  { opacity: 1; transform: translateY(-4px)  scale(1.01); }
+  100% { opacity: 1; transform: translateY(0px)   scale(1); }
+}
+

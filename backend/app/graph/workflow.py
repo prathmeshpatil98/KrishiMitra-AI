@@ -57,12 +57,12 @@ def build_workflow() -> StateGraph:
     # ── Add Nodes ─────────────────────────────────────────────────────────────
     workflow.add_node("planner", planner_node)
     workflow.add_node("market", market_node)
-    workflow.add_node("weather", weather_node)
+    workflow.add_node("weather_agent", weather_node)
     workflow.add_node("transport", transport_node)
     workflow.add_node("government", government_node)
     workflow.add_node("historical", historical_node)
     workflow.add_node("profit", profit_node)
-    workflow.add_node("decision", decision_node)
+    workflow.add_node("decision_agent", decision_node)
     workflow.add_node("formatter", formatter_node)
 
     # ── Add Edges ─────────────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ def build_workflow() -> StateGraph:
         route_planner,
         {
             "market": "market",
-            "weather": "weather",
+            "weather": "weather_agent",
             "government": "government",
             "historical": "historical",
             "profit": "profit",  # fallback path
@@ -86,13 +86,13 @@ def build_workflow() -> StateGraph:
     workflow.add_edge("transport", "profit")
 
     # Parallel join/barrier convergence to profit
-    workflow.add_edge("weather", "profit")
+    workflow.add_edge("weather_agent", "profit")
     workflow.add_edge("government", "profit")
     workflow.add_edge("historical", "profit")
 
     # Sequence execution towards termination
-    workflow.add_edge("profit", "decision")
-    workflow.add_edge("decision", "formatter")
+    workflow.add_edge("profit", "decision_agent")
+    workflow.add_edge("decision_agent", "formatter")
     workflow.add_edge("formatter", END)
 
     return workflow

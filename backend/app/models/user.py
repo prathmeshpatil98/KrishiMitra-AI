@@ -40,6 +40,12 @@ class User(BaseModel):
         comment="Unique user phone number",
     )
 
+    full_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+        comment="User full name",
+    )
+
     password_hash: Mapped[str] = mapped_column(
         String(255),
         nullable=False,

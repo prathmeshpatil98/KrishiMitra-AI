@@ -31,20 +31,25 @@ async def profit_node(state: AgentState) -> Dict[str, Any]:
     rankings: List[Dict[str, Any]] = []
 
     for m in markets:
-        market_name = m["market_name"]
-        price_per_quintal = m["price"]
+        market_name = m.get("market_name") or "Unknown Market"
+        price_per_quintal = float(m.get("price") or 0.0)
+        state_name = m.get("state") or "Unknown"
 
         # Commission (approx 2% standard mandi charges)
         gross_revenue = price_per_quintal * quantity
         commission = gross_revenue * 0.02
         loading_cost = quantity * 15.0  # Rs. 15 per quintal labor cost
-        transport_cost = logistics_map.get(market_name, gross_revenue * 0.05)  # Fallback 5%
+        transport_cost = logistics_map.get(market_name)
+        if transport_cost is None:
+            transport_cost = gross_revenue * 0.05
+        else:
+            transport_cost = float(transport_cost)
 
         net_profit = gross_revenue - (transport_cost + commission + loading_cost)
 
         rankings.append({
             "market_name": market_name,
-            "state": m["state"],
+            "state": state_name,
             "gross_revenue": gross_revenue,
             "transport_cost": transport_cost,
             "commission_charges": commission,

@@ -66,10 +66,10 @@ export function ForecastGrid({ forecast, selectedIdx, setSelectedIdx, icons }: F
                 active
                   ? 'bg-[#2ECC71]/15 text-[#43F59A] border-[#2ECC71]/25'
                   : day.status === 'clear'
-                  ? 'bg-emerald-500/10 text-emerald-450 border-emerald-500/15'
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/15'
                   : day.status === 'showers'
-                  ? 'bg-amber-500/10 text-amber-450 border-amber-500/15'
-                  : 'bg-rose-500/10 text-rose-450 border-rose-500/15'
+                  ? 'bg-amber-500/10 text-amber-400 border-amber-500/15'
+                  : 'bg-rose-500/10 text-rose-400 border-rose-500/15'
               }`}
             >
               {day.rainProb}% rain

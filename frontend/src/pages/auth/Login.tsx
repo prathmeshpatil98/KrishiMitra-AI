@@ -89,7 +89,7 @@ export function Login() {
             created_at: new Date().toISOString(),
             farmer_profile: {
               id: 'mock-profile-uuid',
-              full_name: 'Rajesh Kumar',
+              full_name: 'Pratiksha Tiwari',
               state: 'Maharashtra',
               district: 'Kolhapur',
             }

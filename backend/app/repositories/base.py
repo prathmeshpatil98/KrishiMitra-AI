@@ -87,6 +87,14 @@ class AbstractRepository(ABC, Generic[ModelT]):
             )
         return entity
 
+    async def get(self, entity_id: str, include_deleted: bool = False) -> ModelT:
+        """
+        Alias for get_by_id.
+
+        Used by higher-level services and endpoint handlers that call `repo.get(...)`.
+        """
+        return await self.get_by_id(entity_id, include_deleted=include_deleted)
+
     async def get_all(
         self,
         page: int = 1,

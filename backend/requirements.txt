@@ -34,9 +34,7 @@ structlog==24.4.0
 
 # --- AI: LangGraph / LangChain ---
 langgraph==0.2.59
-langchain-core==0.3.25
-langchain-openai==0.2.14
-langchain-google-genai==2.0.8
+langchain-core==0.3.27
 langsmith==0.2.3
 
 # --- Background Tasks ---

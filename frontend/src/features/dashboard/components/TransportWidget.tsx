@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { MapPin, Route, Fuel, Milestone, Coins, Clock } from 'lucide-react'
+import { useLanguage } from '@/app/providers/LanguageProvider'
 
 interface RouteItem {
   id: string
@@ -26,6 +27,8 @@ export function TransportWidget({
   activeRoute,
   routeMapUrl,
 }: TransportWidgetProps) {
+  const { t } = useLanguage()
+
   return (
     <section id="transport" className="w-full py-28 bg-[#08120E] border-b border-white/[0.04]">
       <div className="w-full max-w-7xl mx-auto px-6 sm:px-8">
@@ -40,13 +43,13 @@ export function TransportWidget({
         >
           <div className="flex items-center gap-2.5 px-3 py-1 rounded-full bg-[#2ECC71]/10 border border-[#2ECC71]/25 text-[#43F59A] text-[9.5px] font-black uppercase tracking-[0.2em] w-fit mb-4 font-mono">
             <span className="w-1.5 h-1.5 rounded-full bg-[#43F59A] animate-pulse" />
-            04 // Logistics Optimization
+            {t('trans_widget_eyebrow')}
           </div>
           <h2 className="text-white tracking-tight leading-[1.1] text-[2.5rem] sm:text-[3.2rem] font-extrabold uppercase">
-            Logistics Routing Optimizer
+            {t('trans_widget_title')}
           </h2>
           <p className="text-zinc-400 text-[14.5px] mt-4 max-w-lg font-medium leading-relaxed">
-            Configure transit matrices, analyze fuel allocations, and coordinate optimal freight routes to peak local APMC yards.
+            {t('trans_widget_desc')}
           </p>
         </motion.div>
 
@@ -83,19 +86,19 @@ export function TransportWidget({
 
                   <div className="grid grid-cols-3 gap-2 text-[11px] mt-4 pt-3 border-t border-white/[0.04] text-zinc-400 font-medium">
                     <div>
-                      <p className="text-zinc-550 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">Distance</p>
+                      <p className="text-zinc-550 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">{t('trans_widget_distance')}</p>
                       <p className="font-extrabold text-zinc-200 text-[12px]">
                         {r.distance} km
                       </p>
                     </div>
                     <div>
-                      <p className="text-zinc-555 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">Fuel Cost</p>
+                      <p className="text-zinc-555 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">{t('trans_widget_fuel')}</p>
                       <p className="font-extrabold text-zinc-200 text-[12px]">
                         ₹{r.fuelCost}
                       </p>
                     </div>
                     <div>
-                      <p className="text-zinc-555 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">Haulage</p>
+                      <p className="text-zinc-555 font-bold mb-0.5 uppercase tracking-widest text-[8px] font-mono">{t('trans_widget_haulage')}</p>
                       <p className="font-extrabold text-[#43F59A] text-[12px]">
                         ₹{r.totalCost}
                       </p>
@@ -140,9 +143,9 @@ export function TransportWidget({
             {/* Expense breakdown cards */}
             <div className="p-6 grid grid-cols-3 gap-5 bg-[#08120E]/50 border-t border-white/[0.04]">
               {[
-                { label: 'Fuel Matrix', val: `₹${activeRoute.fuelCost}`, icon: Fuel, color: 'text-[#2ECC71]' },
-                { label: 'Toll Charges', val: `₹${activeRoute.tollCost}`, icon: Milestone, color: 'text-zinc-400' },
-                { label: 'Transit Total', val: `₹${activeRoute.totalCost}`, icon: Coins, color: 'text-[#43F59A]', highlight: true },
+                { label: t('trans_widget_fuel'), val: `₹${activeRoute.fuelCost}`, icon: Fuel, color: 'text-[#2ECC71]' },
+                { label: t('market_price') === 'Price' ? 'Toll Charges' : t('market_price') === 'दर' ? 'टोल खर्च' : 'टोल शुल्क', val: `₹${activeRoute.tollCost}`, icon: Milestone, color: 'text-zinc-400' },
+                { label: t('trans_widget_haulage'), val: `₹${activeRoute.totalCost}`, icon: Coins, color: 'text-[#43F59A]', highlight: true },
               ].map((expense) => {
                 const IconComponent = expense.icon
                 return (

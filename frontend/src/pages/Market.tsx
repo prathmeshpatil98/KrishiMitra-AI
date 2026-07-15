@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, ArrowLeft, ArrowUpDown, Bell, Languages, Zap, Compass } from 'lucide-react'
+import { Search, ArrowLeft, ArrowUpDown, Bell, Zap, Compass } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { apiClient } from '@/services/api/client'
 import { API_ENDPOINTS } from '@/constants/api'
 import { ROUTES } from '@/constants/routes'
+import { useLanguage } from '@/app/providers/LanguageProvider'
 
 // Subcomponents
 import { PriceChart } from '@/features/market/components/PriceChart'
@@ -106,14 +107,43 @@ const TRANSLATIONS = {
     logisticsIntel: "लॉजिस्टिक्स बुद्धिमत्ता",
     aiInsightTitle: "एआय वाहतूक सल्ला",
     aiInsightDesc: "वाहतूक मार्ग सुयोग्य आहे. इंधन खर्च किमान राखण्यासाठी वेग नियंत्रित ठेवा.",
+  },
+  hi: {
+    eyebrow: "पश्चिम महाराष्ट्र नोड",
+    title: "बाज़ार बुद्धिमत्ता",
+    subtitle: "पश्चिम महाराष्ट्र के लाइव एपीएमसी भाव, माल ढुलाई और अनुमानित मार्जिन।",
+    searchPlaceholder: "बाज़ार या फसल खोजें...",
+    all: "सभी",
+    sugarcane: "गन्ना",
+    paddy: "धान",
+    soybean: "सोयाबीन",
+    onion: "प्याज़",
+    tomato: "टमाटर",
+    apple: "सेब",
+    distance: "परिवहन दूरी",
+    tollCost: "परिवहन लागत",
+    sellingPrice: "लाइव बाज़ार मूल्य",
+    netProfit: "अनुमानित लाभ",
+    netReturnTip: "50 क्विंटल पर शुद्ध लाभ",
+    rateTrend: "मूल्य सूचकांक रुझान",
+    fiveWeekOverview: "5-सप्ताह का ऐतिहासिक अवलोकन",
+    backButton: "डैशबोर्ड",
+    sortBy: "क्रमबद्ध",
+    sortProfit: "अनुमानित लाभ",
+    sortPrice: "लाइव मूल्य",
+    sortDistance: "भौतिक दूरी",
+    alertText: "लासलगांव प्याज़ दरें बढ़ रही हैं (+4.6% डेल्टा)। लॉजिस्टिक्स विकल्प जांचें।",
+    logisticsIntel: "लॉजिस्टिक्स इंटेलिजेंस",
+    aiInsightTitle: "एआई लॉजिस्टिक्स सलाह",
+    aiInsightDesc: "रूट अनुकूलतम है। उच्च घनत्व पारगमन अनुशंसित। नमी रोकने के लिए कार्गो ढकें।",
   }
 }
 
 const CATEGORIES = [
-  { id: 'all', label: { en: 'All Commodities', mr: 'सर्व पिके फळे भाज्या' } },
-  { id: 'crop', label: { en: 'Field Crops', mr: 'शेती पिके' } },
-  { id: 'vegetable', label: { en: 'Vegetables', mr: 'भाज्या' } },
-  { id: 'fruit', label: { en: 'Fruits', mr: 'फळे' } },
+  { id: 'all', label: { en: 'All Commodities', mr: 'सर्व पिके फळे भाज्या', hi: 'सभी वस्तुएं' } },
+  { id: 'crop', label: { en: 'Field Crops', mr: 'शेती पिके', hi: 'फसलें' } },
+  { id: 'vegetable', label: { en: 'Vegetables', mr: 'भाज्या', hi: 'सब्जियां' } },
+  { id: 'fruit', label: { en: 'Fruits', mr: 'फळे', hi: 'फल' } },
 ]
 
 const CROP_CATEGORIES: Record<string, 'crop' | 'vegetable' | 'fruit'> = {
@@ -129,6 +159,7 @@ type SortKey = 'profit' | 'price' | 'distance'
 
 export function Market() {
   const navigate = useNavigate()
+  const { language } = useLanguage()
   const [mandis, setMandis] = useState<MandiItem[]>(MOCK)
   const [searchQuery, setSearchQuery] = useState('')
   
@@ -137,11 +168,11 @@ export function Market() {
   const [selectedCrop, setSelectedCrop] = useState<string>('All')
   const [selectedId, setSelectedId] = useState<string>('1')
   
-  // Trilingual & sort states
-  const [isMarathi, setIsMarathi] = useState(false)
+  // Sort state
   const [sortBy, setSortBy] = useState<SortKey>('profit')
 
-  const t = isMarathi ? TRANSLATIONS.mr : TRANSLATIONS.en
+  // Derive translations from global language context
+  const t = language === 'mr' ? TRANSLATIONS.mr : language === 'hi' ? TRANSLATIONS.hi : TRANSLATIONS.en
 
   useEffect(() => {
     apiClient
@@ -218,15 +249,6 @@ export function Market() {
               <ArrowLeft size={14} className="stroke-[2.5]" />
               {t.backButton}
             </button>
-
-            {/* Trilingual Toggle */}
-            <button
-              onClick={() => setIsMarathi(!isMarathi)}
-              className="flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-[#2ECC71]/10 border border-[#2ECC71]/25 text-[#43F59A] text-[12px] font-bold hover:bg-[#2ECC71]/20 transition-all cursor-pointer shadow-lg shadow-[#2ECC71]/5"
-            >
-              <Languages size={14} />
-              {isMarathi ? "English" : "मराठी"}
-            </button>
           </div>
 
           <motion.div
@@ -288,11 +310,11 @@ export function Market() {
                         transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                       />
                     )}
-                    {isMarathi ? cat.label.mr : cat.label.en}
+                    {language === 'mr' ? cat.label.mr : language === 'hi' ? cat.label.hi : cat.label.en}
                   </button>
                 )
-              })}
-            </div>
+               })}
+             </div>
 
             {/* Sorting & Search */}
             <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
@@ -371,7 +393,6 @@ export function Market() {
               filteredMandis={filtered}
               selectedId={selectedId}
               setSelectedId={setSelectedId}
-              isMarathi={isMarathi}
             />
           </div>
 
@@ -466,7 +487,6 @@ export function Market() {
                     t.apple
                   }
                   mandiName={active.name.split(',')[0]}
-                  isMarathi={isMarathi}
                 />
               </div>
             )}

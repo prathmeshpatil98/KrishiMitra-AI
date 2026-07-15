@@ -500,3 +500,44 @@
   box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
 }
 
+/* ── Animation Utility Wrappers (reference keyframes from animations.css) ── */
+
+/* Aurora drift blobs */
+.animate-aurora-1 { animation: aurora-drift-1 18s ease-in-out infinite; }
+.animate-aurora-2 { animation: aurora-drift-2 22s ease-in-out infinite; }
+.animate-aurora-3 { animation: aurora-drift-3 15s ease-in-out infinite; }
+
+/* Animated gradient text */
+.animate-gradient-text {
+  background-size: 300% 100%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* Float bob element */
+.animate-float-bob { animation: float-bob 5s ease-in-out infinite; }
+
+/* Spring entrance */
+.animate-spring-up { animation: spring-up 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+
+/* Shine card */
+.card-shine { position: relative; overflow: hidden; }
+.card-shine::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 50px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+  transform: skewX(-20deg);
+  left: -100%;
+  pointer-events: none;
+}
+.card-shine:hover::after {
+  animation: shine-sweep 0.7s ease forwards;
+}
+
+/* Pulsing green glow */
+.glow-green { animation: pulse-glow 3s ease-in-out infinite; }
+.glow-gold  { animation: pulse-glow-gold 3s ease-in-out infinite; }
+
+/* Scrollbar colorful */
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #34d399 0%, #38bdf8 100%); }

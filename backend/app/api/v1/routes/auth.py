@@ -17,6 +17,7 @@ from app.core.exceptions import AuthenticationError
 from app.core.logging import get_logger
 from app.dependencies.database import get_db
 from app.dependencies.auth import get_current_user, CurrentUser
+from app.models.user import User
 from app.repositories.user import UserRepository
 from app.security.hashing import PasswordHasher
 from app.security.jwt import TokenService
@@ -80,15 +81,15 @@ async def register(
     # 3. Create user entity with hashed password
     hashed_pwd = PasswordHasher.hash_password(payload.password)
     user_record = await user_repo.create(
-        {
-            "full_name": payload.full_name,
-            "email": payload.email,
-            "phone": payload.phone,
-            "hashed_password": hashed_pwd,
-            "role": payload.role,
-            "is_active": True,
-            "is_verified": False,
-        }
+        User(
+            full_name=payload.full_name,
+            email=payload.email,
+            phone=payload.phone,
+            password_hash=hashed_pwd,
+            role=payload.role,
+            is_active=True,
+            is_verified=False,
+        )
     )
 
     # 4. Generate JWT access and refresh tokens
@@ -128,7 +129,7 @@ async def login(
         user_record = await user_repo.get_by_phone(payload.username)
 
     # 2. Verify credentials
-    if not user_record or not PasswordHasher.verify_password(payload.password, user_record.hashed_password):
+    if not user_record or not PasswordHasher.verify_password(payload.password, user_record.password_hash):
         logger.warning("user_login_failed_credentials", username=payload.username)
         raise AuthenticationError("Invalid login credentials.")
 

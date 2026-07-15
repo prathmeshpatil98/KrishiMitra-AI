@@ -42,11 +42,15 @@ async def transport_node(state: AgentState) -> Dict[str, Any]:
             "dest_lng": dest_lng
         })
 
+        transport_cost = route.get("total_estimated_cost")
+        if transport_cost is None:
+            transport_cost = float(route.get("fuel_cost", 0.0)) + float(route.get("toll_cost", 0.0))
+
         routes.append({
             "market_name": m.get("market_name"),
             "distance_km": route.get("distance_km"),
-            "travel_time": route.get("travel_time"),
-            "transport_cost": route.get("total_estimated_cost")
+            "travel_time": route.get("travel_time") or route.get("travel_time_seconds"),
+            "transport_cost": transport_cost,
         })
 
     logger.info("transport_node_completed", routes_count=len(routes))

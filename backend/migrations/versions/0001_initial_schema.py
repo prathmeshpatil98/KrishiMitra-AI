@@ -26,6 +26,7 @@ def upgrade() -> None:
         sa.Column("id", sa.String(36), primary_key=True, index=True),
         sa.Column("email", sa.String(255), nullable=False, unique=True, index=True),
         sa.Column("phone", sa.String(50), nullable=True, unique=True, index=True),
+        sa.Column("full_name", sa.String(255), nullable=False),
         sa.Column("password_hash", sa.String(255), nullable=False),
         sa.Column("role", sa.String(50), nullable=False, server_default="farmer"),
         sa.Column("preferred_language", sa.String(10), nullable=False, server_default="en"),

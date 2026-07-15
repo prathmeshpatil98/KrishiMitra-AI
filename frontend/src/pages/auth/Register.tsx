@@ -117,7 +117,7 @@ export function Register() {
           <div className="relative group">
             <Input
               type="text"
-              placeholder="Rajesh Kumar"
+              placeholder="Pratiksha Tiwari"
               error={errors.name?.message}
               leftIcon={<User size={17} className="text-text-muted group-focus-within:text-farm-green transition-colors" />}
               disabled={loading}

@@ -4,7 +4,7 @@
  * Purpose: Render user profile images or initials fallbacks with size options and status dots.
  * Responsibilities: Render image safely, calculate initials on fallback, display optional status.
  * Dependencies: clsx, tailwind-merge
- * Usage: <Avatar src={user.avatar} name="Rajesh Kumar" status="online" size="md" />
+ * Usage: <Avatar src={user.avatar} name="Pratiksha Tiwari" status="online" size="md" />
  */
 
 import React, { useState } from 'react'

@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Route, TrendingUp, TrendingDown, Fuel, Calendar, ShieldCheck } from 'lucide-react'
+import { useLanguage } from '@/app/providers/LanguageProvider'
 
 interface MandiItem {
   id: string
@@ -22,9 +23,12 @@ interface MandiListProps {
 }
 
 const LOCAL_CROP_NAMES: Record<string, Record<string, string>> = {
-  Sugarcane: { en: 'Sugarcane', mr: 'ऊस' },
-  Paddy:     { en: 'Paddy',     mr: 'धान' },
-  Soybean:   { en: 'Soybean',   mr: 'सोयाबीन' },
+  Sugarcane: { en: 'Sugarcane', mr: 'ऊस',       hi: 'गन्ना'    },
+  Paddy:     { en: 'Paddy',     mr: 'धान',       hi: 'धान'      },
+  Soybean:   { en: 'Soybean',   mr: 'सोयाबीन',  hi: 'सोयाबीन'  },
+  Onion:     { en: 'Onion',     mr: 'कांदा',    hi: 'प्याज़'   },
+  Tomato:    { en: 'Tomato',    mr: 'टोमॅटो',   hi: 'टमाटर'    },
+  Apple:     { en: 'Apple',     mr: 'सफरचंद',  hi: 'सेब'      },
 }
 
 const LOCAL_LABELS = {
@@ -53,6 +57,19 @@ const LOCAL_LABELS = {
     openStatus: "व्यवहारासाठी सुरू",
     grossReturnTip: "५० क्विंटलवर सकल उत्पन्न",
     netReturnTip: "वाहतूक खर्च वजा जाता नफा",
+  },
+  hi: {
+    livePrice: "लाइव बाज़ार मूल्य",
+    projectedRevenue: "अनुमानित आय",
+    projectedProfit: "अनुमानित लाभ",
+    today: "आज",
+    yesterday: "कल",
+    distance: "दूरी",
+    transport: "परिवहन लागत",
+    accuracy: "सटीकता",
+    openStatus: "व्यापार के लिए खुला",
+    grossReturnTip: "50 क्विंटल पर सकल आय",
+    netReturnTip: "परिवहन के बाद शुद्ध लाभ",
   }
 }
 
@@ -63,9 +80,10 @@ const CROP_METRICS: Record<string, { confidence: string; roi: string }> = {
   Soybean:   { confidence: '97%', roi: '4.2x ROI' },
 }
 
-export function MandiList({ filteredMandis, selectedId, setSelectedId, isMarathi = false }: MandiListProps) {
-  const lang = isMarathi ? 'mr' : 'en'
-  const labels = isMarathi ? LOCAL_LABELS.mr : LOCAL_LABELS.en
+export function MandiList({ filteredMandis, selectedId, setSelectedId }: Omit<MandiListProps, 'isMarathi'>) {
+  const { language } = useLanguage()
+  const lang = language === 'mr' ? 'mr' : language === 'hi' ? 'hi' : 'en'
+  const labels = LOCAL_LABELS[lang]
 
   return (
     <div className="flex flex-col gap-4 font-sans text-left">
@@ -128,7 +146,7 @@ export function MandiList({ filteredMandis, selectedId, setSelectedId, isMarathi
                     className={`flex items-center gap-0.5 text-[9.5px] font-bold px-2 py-0.5 rounded-full border w-fit font-mono mt-1.5 ${
                       diff >= 0
                         ? 'bg-[#2ECC71]/10 text-[#43F59A] border-[#2ECC71]/15'
-                        : 'bg-rose-500/10 text-rose-450 border-rose-500/15'
+                        : 'bg-rose-500/10 text-rose-400 border-rose-500/15'
                     }`}
                   >
                     {diff >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
