@@ -48,7 +48,7 @@ class APILog(BaseModel):
 
     user_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("users.id", ondelete="SET_NULL"),
+        ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
         comment="Reference to user who triggered the request",
@@ -198,7 +198,7 @@ class AuditLog(BaseModel):
 
     performed_by: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("users.id", ondelete="SET_NULL"),
+        ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
         comment="Reference to user who triggered the change",

@@ -79,10 +79,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     redis_client = await init_redis_pool()
 
     # Attach the Redis client to the rate limit middleware instance
-    for middleware in app.middleware_stack.__dict__.get("app", {.__class__: None}):
-        if isinstance(middleware, RateLimitMiddleware):
-            middleware._redis = redis_client
+    current_app = getattr(app, "middleware_stack", None)
+    while current_app is not None:
+        if isinstance(current_app, RateLimitMiddleware):
+            current_app._redis = redis_client
             break
+        current_app = getattr(current_app, "app", None)
 
     logger.info("application_ready", host=settings.HOST, port=settings.PORT)
 

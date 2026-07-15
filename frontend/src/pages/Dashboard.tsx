@@ -1,382 +1,229 @@
 /**
- * KrishiMitra AI — Premium Dashboard Page
- * ========================================
- * Purpose: Render the main overview dashboard showing status updates, key widgets, and recommendations.
- * Design: High-end SaaS quality comparable to Linear/Stripe, glassmorphic hover effects, animations, and fully responsive panels.
+ * KrishiMitra AI — Agricultural Premium Storytelling Homepage
+ * ===========================================================
+ * Refactored modular dashboard container using premium widgets.
  */
 
-import { motion } from 'framer-motion'
-import {
-  TrendingUp,
-  CloudSun,
-  Sprout,
-  Landmark,
-  ArrowUpRight,
-  MapPin,
-  Route,
-  MessageSquare,
-  Bell,
-  CheckCircle,
-  AlertTriangle,
-  ChevronRight,
-  TrendingDown,
-  DollarSign
-} from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { apiClient } from '@/services/api/client'
+import { API_ENDPOINTS } from '@/constants/api'
 
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
+// Feature Components
+import { MarketTicker } from '@/features/dashboard/components/MarketTicker'
+import { HeroSection } from '@/features/dashboard/components/HeroSection'
+import { ServicesOverview } from '@/features/dashboard/components/ServicesOverview'
+import { MandiExplorerWidget } from '@/features/dashboard/components/MandiExplorerWidget'
+import { AIAdvisorWidget } from '@/features/dashboard/components/AIAdvisorWidget'
+import { TransportWidget } from '@/features/dashboard/components/TransportWidget'
+import { TestimonialSplit } from '@/features/dashboard/components/TestimonialSplit'
 
-// Stagger Animation Config
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
+/* ────────────────────────────────────────────────
+   Types
+   ──────────────────────────────────────────────── */
+type CropKey = 'Sugarcane' | 'Paddy' | 'Soybean'
+
+interface MandiItem {
+  id: string
+  name: string
+  crop: string
+  price: number
+  previousPrice: number
+  distance: number
+  transportCost: number
+  latitude: number
+  longitude: number
+  arrivalDate: string
+}
+interface ForecastDay {
+  date: string
+  temp: number
+  rainProb: number
+  humidity: number
+  desc: string
+  status: 'clear' | 'showers' | 'warning'
+}
+interface RouteItem {
+  id: string
+  name: string
+  distance: number
+  eta: string
+  fuelCost: number
+  tollCost: number
+  totalCost: number
+}
+interface SchemeItem {
+  id: string
+  name: string
+  icon: string
+  benefits: string
+  deadline: string
+  tag: string
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100 } }
-}
+/* ────────────────────────────────────────────────
+   Static / Fallback Data
+   ──────────────────────────────────────────────── */
+const MOCK_MANDIS: MandiItem[] = [
+  { id: '1', name: 'APMC Yard, Kolhapur',          crop: 'Sugarcane', price: 3150, previousPrice: 3080, distance: 8.2, transportCost: 120, latitude: 16.7032, longitude: 74.2498, arrivalDate: 'Today' },
+  { id: '2', name: 'Shahupuri Bhaji Market',        crop: 'Sugarcane', price: 3180, previousPrice: 3120, distance: 1.5, transportCost: 14,  latitude: 16.7061, longitude: 74.2385, arrivalDate: 'Today' },
+  { id: '3', name: 'Sane Guruji Vegetable Market',  crop: 'Sugarcane', price: 3110, previousPrice: 3110, distance: 5.4, transportCost: 49,  latitude: 16.6811, longitude: 74.2185, arrivalDate: 'Yesterday' },
+  { id: '4', name: 'Kalamba Wholesale Market',       crop: 'Paddy',     price: 2150, previousPrice: 2100, distance: 6.8, transportCost: 61,  latitude: 16.6775, longitude: 74.2255, arrivalDate: 'Today' },
+  { id: '5', name: 'Padalkar Market, Kolhapur',     crop: 'Paddy',     price: 2100, previousPrice: 2150, distance: 4.2, transportCost: 38,  latitude: 16.6974, longitude: 74.2098, arrivalDate: 'Today' },
+  { id: '6', name: 'APMC Yard, Kolhapur',           crop: 'Soybean',   price: 4450, previousPrice: 4380, distance: 8.2, transportCost: 120, latitude: 16.7032, longitude: 74.2498, arrivalDate: 'Today' },
+  { id: '7', name: 'Shahupuri Bhaji Market',        crop: 'Soybean',   price: 4480, previousPrice: 4420, distance: 1.5, transportCost: 14,  latitude: 16.7061, longitude: 74.2385, arrivalDate: 'Today' },
+]
+
+const MOCK_FORECAST: ForecastDay[] = [
+  { date: 'Today',     temp: 29.5, rainProb: 15, humidity: 65, desc: 'Partly Cloudy',       status: 'clear' },
+  { date: 'Wed',       temp: 30.0, rainProb: 10, humidity: 60, desc: 'Sunny Day',            status: 'clear' },
+  { date: 'Thu',       temp: 28.5, rainProb: 40, humidity: 75, desc: 'Light Showers',        status: 'showers' },
+  { date: 'Fri',       temp: 27.0, rainProb: 65, humidity: 85, desc: 'Heavy Rain',           status: 'warning' },
+  { date: 'Sat',       temp: 29.0, rainProb: 20, humidity: 70, desc: 'Scattered Clouds',     status: 'clear' },
+]
+
+const MOCK_ROUTES: RouteItem[] = [
+  { id: '1', name: 'APMC Yard, Kolhapur',        distance: 8.2, eta: '15 min', fuelCost: 74,  tollCost: 0,  totalCost: 74 },
+  { id: '2', name: 'Shahupuri Bhaji Market',     distance: 1.5, eta: '5 min',  fuelCost: 14,  tollCost: 0,  totalCost: 14 },
+  { id: '3', name: 'Sane Guruji Veg Market',     distance: 5.4, eta: '12 min', fuelCost: 49,  tollCost: 0,  totalCost: 49 },
+  { id: '4', name: 'Sangli APMC',                distance: 48,  eta: '55 min', fuelCost: 432, tollCost: 50, totalCost: 482 },
+]
+
+const SCHEMES: SchemeItem[] = [
+  { id: '1', name: 'PM Kisan Samman Nidhi',   icon: '💰', benefits: '₹6,000/year in 3 direct bank installments',           deadline: 'Ongoing',         tag: 'Financial' },
+  { id: '2', name: 'PM Fasal Bima Yojana',    icon: '🛡️', benefits: 'Crop insurance for drought, flood & storm damage',       deadline: 'Before sowing',   tag: 'Insurance' },
+  { id: '3', name: 'SMAM Equipment Subsidy',  icon: '🚜', benefits: '40–50% subsidy on tractor, tiller & sowing drills',     deadline: 'Aug 31, 2026',    tag: 'Equipment' },
+  { id: '4', name: 'Soil Health Card Scheme', icon: '🌱', benefits: 'Free soil nutrient analysis + custom fertilizer plan',   deadline: 'Seasonal',        tag: 'Soil & Water' },
+]
 
 export function Dashboard() {
-  // Mock data matching backend LangGraph execution results
-  const mockRecommendation = {
-    crop: 'Wheat',
-    quantity: '100 Quintals',
-    bestMarket: 'Ujjain Mandi',
-    netProfit: 244010.70,
-    confidence: 95,
-    sellingDay: 'Friday',
-    advice: 'Weather is ideal for transit and harvest.'
-  }
+  const { user } = useAuth()
 
-  const mockMarkets = [
-    { name: 'Ujjain Mandi', price: 2510.0, distance: '45.8 km', cost: 469.30, profit: 244010.70, trend: 'up' },
-    { name: 'Indore Mandi', price: 2450.0, distance: '12.4 km', cost: 185.40, profit: 238914.60, trend: 'up' },
-    { name: 'Dewas Mandi', price: 2390.0, distance: '38.2 km', cost: 404.70, profit: 232145.30, trend: 'down' }
-  ]
+  /* ── State ─────────────────────────────────── */
+  const [crop, setCrop] = useState<CropKey>('Sugarcane')
+  const [mandis, setMandis] = useState<MandiItem[]>(MOCK_MANDIS)
+  const [forecast, setForecast] = useState<ForecastDay[]>(MOCK_FORECAST)
+  const [routes, setRoutes] = useState<RouteItem[]>(MOCK_ROUTES)
+  const [selectedMandiId, setSelectedMandiId] = useState('1')
+  const [selectedDayIdx] = useState(0)
+  const [selectedRouteId, setSelectedRouteId] = useState('1')
+  const [mandiSearch, setMandiSearch] = useState('')
 
-  const mockForecast = [
-    { date: 'Today', temp: '29.5°C', desc: 'Sunny', rain: '15%', status: 'clear' },
-    { date: 'Tomorrow', temp: '30.0°C', desc: 'Partly Cloudy', rain: '10%', status: 'clear' },
-    { date: 'Thursday', temp: '28.5°C', desc: 'Showers Predicted', rain: '40%', status: 'warning' }
-  ]
+  /* ── Derived ───────────────────────────────── */
+  // Removed local greeting calculations
 
-  const mockConversations = [
-    { id: '1', title: 'Wheat Profit Margin Query', time: '10 min ago', excerpt: 'I found Ujjain Mandi yields...' },
-    { id: '2', title: 'Paddy Harvesting Weather Advice', time: '2 hours ago', excerpt: 'Heavy rain is expected...' }
-  ]
+  const filteredMandis = mandis.filter(
+    (m) =>
+      (crop === 'Sugarcane' || crop === 'Paddy' || crop === 'Soybean' ? m.crop === crop : true) &&
+      m.name.toLowerCase().includes(mandiSearch.toLowerCase())
+  )
+  const activeMandi = mandis.find((m) => m.id === selectedMandiId) || mandis[0]
+  const activeDay = forecast[selectedDayIdx]
+  const activeRoute = routes.find((r) => r.id === selectedRouteId) || routes[0]
 
-  const mockNotifications = [
-    { id: '1', type: 'price', text: 'Wheat rate in Indore increased by 5%', color: 'border-green-500/20 bg-green-500/5 text-green-500' },
-    { id: '2', type: 'warning', text: 'High transit risk next Thursday due to rainfall forecast', color: 'border-amber-500/20 bg-amber-500/5 text-amber-500' }
-  ]
+  const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
+    activeMandi.name + ', Kolhapur, Maharashtra'
+  )}&t=&z=14&ie=UTF8&iwloc=&output=embed`
+  const routeMapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
+    activeRoute.name + ', Kolhapur, Maharashtra'
+  )}&t=&z=14&ie=UTF8&iwloc=&output=embed`
+
+  /* ── Real API fetch (with fallback) ─────────── */
+  useEffect(() => {
+    apiClient
+      .get(API_ENDPOINTS.MARKETS.LIST)
+      .then((res) => {
+        if (res.data?.data?.length) setMandis(res.data.data)
+      })
+      .catch(() => {})
+
+    apiClient
+      .get(API_ENDPOINTS.WEATHER.FORECAST)
+      .then((res) => {
+        if (res.data?.data?.length) setForecast(res.data.data)
+      })
+      .catch(() => {})
+
+    apiClient
+      .get(API_ENDPOINTS.TRANSPORT.ROUTES)
+      .then((res) => {
+        if (res.data?.data?.length) setRoutes(res.data.data)
+      })
+      .catch(() => {})
+  }, [])
+
+
+
+  /* ── Hazard risk ─────────────────────────────── */
+  const harvestRisk =
+    activeDay.rainProb > 50
+      ? {
+          level: 'HIGH RISK',
+          color: 'text-rose-400 bg-rose-950/20 border-rose-900/30',
+          tip: 'Delay harvest. Soil saturation hazard.',
+        }
+      : activeDay.rainProb > 30
+      ? {
+          level: 'MEDIUM RISK',
+          color: 'text-amber-400 bg-amber-950/20 border-amber-900/30',
+          tip: 'Cover cargo with waterproof tarps.',
+        }
+      : {
+          level: 'LOW RISK',
+          color: 'text-[#43F59A] bg-emerald-950/10 border-[#2ECC71]/20',
+          tip: 'Optimal harvest and transit conditions.',
+        }
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="flex flex-col gap-6"
-    >
-      {/* ── Welcome Header & Local Settings ────────────────────────────────────── */}
-      <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-h1 font-black tracking-tight text-text-primary dark:text-white">
-            Overview
-          </h1>
-          <p className="text-body text-text-secondary dark:text-text-muted mt-1">
-            Real-time optimization matrix for agricultural logistics & profits.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="h-9">
-            <MapPin size={16} className="mr-2" /> Indore, MP
-          </Button>
-          <Button variant="primary" size="sm" className="h-9 bg-brand-primary hover:bg-brand-primary/95 text-white">
-            Optimize Today
-          </Button>
-        </div>
-      </motion.div>
+    <div className="w-full flex flex-col overflow-x-hidden bg-[#08120E] text-white">
+      {/* Scroll indicator bar */}
+      <div className="scroll-progress" />
 
-      {/* ── Metric Cards Row ─────────────────────────────────────────────────── */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card hoverable className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <DollarSign size={80} />
-          </div>
-          <Card.Body className="flex flex-col gap-1.5">
-            <span className="text-caption font-semibold tracking-wider text-text-secondary dark:text-text-muted uppercase">Expected Net Profit</span>
-            <div className="text-h2 font-black text-brand-primary tracking-tight">₹2,44,010.70</div>
-            <span className="text-caption flex items-center text-emerald-500 dark:text-emerald-400 font-semibold gap-1">
-              <TrendingUp size={14} /> +₹5,096.10 max efficiency yields
-            </span>
-          </Card.Body>
-        </Card>
+      {/* §1 Hero section */}
+      <HeroSection
+        user={user}
+        harvestRisk={harvestRisk}
+        rainProb={activeDay.rainProb}
+        temp={activeDay.temp}
+      />
 
-        <Card hoverable className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <CloudSun size={80} />
-          </div>
-          <Card.Body className="flex flex-col gap-1.5">
-            <span className="text-caption font-semibold tracking-wider text-text-secondary dark:text-text-muted uppercase">Weather Risk Matrix</span>
-            <div className="text-h2 font-black text-text-primary dark:text-white tracking-tight">LOW RISK</div>
-            <span className="text-caption text-emerald-500 font-semibold flex items-center gap-1">
-              <CheckCircle size={14} /> Stable conditions for harvest
-            </span>
-          </Card.Body>
-        </Card>
+      {/* §2 Live Market Ticker */}
+      <MarketTicker />
 
-        <Card hoverable className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Sprout size={80} />
-          </div>
-          <Card.Body className="flex flex-col gap-1.5">
-            <span className="text-caption font-semibold tracking-wider text-text-secondary dark:text-text-muted uppercase">Primary Active Crop</span>
-            <div className="text-h2 font-black text-text-primary dark:text-white tracking-tight">Wheat</div>
-            <span className="text-caption text-text-secondary dark:text-text-muted">100.0 Quintals registered</span>
-          </Card.Body>
-        </Card>
+      {/* §3 Services Overview */}
+      <ServicesOverview />
 
-        <Card hoverable className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Landmark size={80} />
-          </div>
-          <Card.Body className="flex flex-col gap-1.5">
-            <span className="text-caption font-semibold tracking-wider text-text-secondary dark:text-text-muted uppercase">Subsidies & Schemes</span>
-            <div className="text-h2 font-black text-text-primary dark:text-white tracking-tight">3 Eligible</div>
-            <span className="text-caption text-emerald-500 font-semibold flex items-center gap-1">
-              <ArrowUpRight size={14} /> PM-Kisan portal active
-            </span>
-          </Card.Body>
-        </Card>
-      </motion.div>
+      {/* §4 Market Intelligence Mandi Explorer */}
+      <MandiExplorerWidget
+        crop={crop}
+        setCrop={setCrop}
+        mandis={mandis}
+        mandiSearch={mandiSearch}
+        setMandiSearch={setMandiSearch}
+        selectedMandiId={selectedMandiId}
+        setSelectedMandiId={setSelectedMandiId}
+        filteredMandis={filteredMandis}
+        activeMandi={activeMandi}
+        mapUrl={mapUrl}
+      />
 
-      {/* ── Main Dashboard Layout ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        
-        {/* Left Double Columns: Analytics, Rankings, Forecasts */}
-        <div className="xl:col-span-2 flex flex-col gap-6">
-          
-          {/* Today's Recommendation Banner */}
-          <motion.div variants={itemVariants}>
-            <div className="relative overflow-hidden p-6 rounded-card border border-brand-primary/10 bg-linear-to-r from-brand-primary/5 via-brand-secondary/5 to-brand-primary/5 dark:from-brand-primary/10 dark:via-brand-secondary/5 dark:to-brand-primary/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div className="flex-1 flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <Badge variant="info" className="bg-brand-primary/20 text-brand-primary dark:text-brand-secondary border-none px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider">
-                    Today's AI Advisory
-                  </Badge>
-                  <span className="text-caption text-text-secondary dark:text-text-muted">• {mockRecommendation.confidence}% Confidence Rating</span>
-                </div>
-                <h3 className="text-h3 font-black text-text-primary dark:text-white mt-1.5">
-                  Sell Wheat in <span className="text-brand-primary">{mockRecommendation.bestMarket}</span>
-                </h3>
-                <p className="text-small text-text-secondary dark:text-text-muted mt-1 max-w-xl">
-                  {mockRecommendation.advice} Optimal day to sell is estimated on <strong className="text-brand-secondary">{mockRecommendation.sellingDay}</strong> for a projected price of ₹2,510/Quintal.
-                </p>
-              </div>
-              <div className="flex flex-col items-end gap-1 select-none text-right shrink-0">
-                <div className="text-caption text-text-secondary dark:text-text-muted uppercase">Recommended Net Revenue</div>
-                <div className="text-h2 font-black text-brand-primary">₹2.44L</div>
-              </div>
-            </div>
-          </motion.div>
+      {/* §5 AI Advisor */}
+      <AIAdvisorWidget />
 
-          {/* Markets Rankings Widget */}
-          <motion.div variants={itemVariants}>
-            <Card>
-              <Card.Header className="flex flex-row justify-between items-center pb-4 border-b border-border-primary/5">
-                <div>
-                  <h3 className="font-black text-text-primary dark:text-white flex items-center gap-2">
-                    <TrendingUp size={20} className="text-brand-primary" /> Nearby Market Prices
-                  </h3>
-                  <p className="text-caption text-text-secondary dark:text-text-muted mt-0.5">Mandi arrivals and travel logistics projections</p>
-                </div>
-                <Button variant="ghost" size="sm" className="text-brand-primary dark:text-brand-secondary">
-                  View All Mandis <ChevronRight size={16} />
-                </Button>
-              </Card.Header>
-              <Card.Body className="p-0 overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[500px]">
-                  <thead>
-                    <tr className="border-b border-border-primary/5 text-caption font-bold text-text-secondary dark:text-text-muted uppercase bg-border-primary/2">
-                      <th className="p-4">Market</th>
-                      <th className="p-4">Price / Qtl</th>
-                      <th className="p-4">Transit Cost</th>
-                      <th className="p-4">Distance</th>
-                      <th className="p-4">Expected Net Profit</th>
-                      <th className="p-4 text-right">Trend</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {mockMarkets.map((market, idx) => (
-                      <tr 
-                        key={idx} 
-                        className="border-b border-border-primary/5 hover:bg-border-primary/2 transition-colors text-small"
-                      >
-                        <td className="p-4 font-bold text-text-primary dark:text-white flex items-center gap-2">
-                          <MapPin size={14} className="text-text-muted" /> {market.name}
-                        </td>
-                        <td className="p-4 font-semibold text-text-primary dark:text-white">₹{market.price.toLocaleString()}</td>
-                        <td className="p-4 text-text-secondary dark:text-text-muted">₹{market.cost.toFixed(2)}</td>
-                        <td className="p-4 text-text-secondary dark:text-text-muted flex items-center gap-1.5 mt-1 border-none">
-                          <Route size={14} className="text-text-muted" /> {market.distance}
-                        </td>
-                        <td className="p-4 font-bold text-brand-primary">₹{market.profit.toLocaleString()}</td>
-                        <td className="p-4 text-right">
-                          <Badge 
-                            variant={market.trend === 'up' ? 'success' : 'danger'}
-                            className="text-[10px] uppercase font-bold"
-                          >
-                            {market.trend === 'up' ? (
-                              <span className="flex items-center gap-0.5"><TrendingUp size={10} /> Upward</span>
-                            ) : (
-                              <span className="flex items-center gap-0.5"><TrendingDown size={10} /> Down</span>
-                            )}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          </motion.div>
+      {/* §6 Transport Intelligence */}
+      <TransportWidget
+        routes={routes}
+        selectedRouteId={selectedRouteId}
+        setSelectedRouteId={setSelectedRouteId}
+        activeRoute={activeRoute}
+        routeMapUrl={routeMapUrl}
+      />
 
-          {/* Weather & Transit Risk Widgets */}
-          <motion.div variants={itemVariants}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Daily Weather Forecast Card */}
-              <Card>
-                <Card.Header className="pb-3">
-                  <h3 className="font-bold text-text-primary dark:text-white flex items-center gap-2">
-                    <CloudSun size={18} className="text-brand-primary" /> Forecast Weather
-                  </h3>
-                </Card.Header>
-                <Card.Body className="flex flex-col gap-4">
-                  {mockForecast.map((day, idx) => (
-                    <div 
-                      key={idx} 
-                      className="flex justify-between items-center p-3 rounded-xl border border-border-primary/5 hover:bg-border-primary/2 transition-all"
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-text-primary dark:text-white text-small">{day.date}</span>
-                        <span className="text-caption text-text-secondary dark:text-text-muted">{day.desc}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <span className="font-bold text-text-primary dark:text-white text-small">{day.temp}</span>
-                          <div className="text-caption text-text-secondary dark:text-text-muted">Rain: {day.rain}</div>
-                        </div>
-                        {day.status === 'warning' ? (
-                          <AlertTriangle size={18} className="text-warning animate-pulse" />
-                        ) : (
-                          <CheckCircle size={18} className="text-brand-primary" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </Card.Body>
-              </Card>
 
-              {/* Transit Cost Analysis Card */}
-              <Card>
-                <Card.Header className="pb-3">
-                  <h3 className="font-bold text-text-primary dark:text-white flex items-center gap-2">
-                    <Route size={18} className="text-brand-primary" /> Transit Cost Analysis
-                  </h3>
-                </Card.Header>
-                <Card.Body className="flex flex-col gap-4 text-small">
-                  <div className="flex justify-between pb-2 border-b border-border-primary/5">
-                    <span className="text-text-secondary dark:text-text-muted">Fuel Cost (Avg 9 Rs/km)</span>
-                    <span className="font-bold text-text-primary dark:text-white">₹412.20</span>
-                  </div>
-                  <div className="flex justify-between pb-2 border-b border-border-primary/5">
-                    <span className="text-text-secondary dark:text-text-muted">Tolls & Taxes</span>
-                    <span className="font-bold text-text-primary dark:text-white">₹57.10</span>
-                  </div>
-                  <div className="flex justify-between pb-2 border-b border-border-primary/5">
-                    <span className="text-text-secondary dark:text-text-muted">Handling & Commission (2%)</span>
-                    <span className="font-bold text-text-primary dark:text-white">₹5,020.00</span>
-                  </div>
-                  <div className="flex justify-between pt-2">
-                    <span className="font-bold text-text-primary dark:text-white">Total Expenses</span>
-                    <span className="font-black text-brand-primary">₹5,489.30</span>
-                  </div>
-                </Card.Body>
-              </Card>
-
-            </div>
-          </motion.div>
-
-        </div>
-
-        {/* Right Sidebar Columns: Notifications & Conversations */}
-        <div className="flex flex-col gap-6">
-          
-          {/* Notifications Card */}
-          <motion.div variants={itemVariants}>
-            <Card>
-              <Card.Header className="pb-3">
-                <h3 className="font-bold text-text-primary dark:text-white flex items-center gap-2">
-                  <Bell size={18} className="text-brand-primary animate-bounce" /> Alerts & Notifications
-                </h3>
-              </Card.Header>
-              <Card.Body className="flex flex-col gap-3">
-                {mockNotifications.map((notif) => (
-                  <div 
-                    key={notif.id} 
-                    className={`p-4 rounded-xl border flex items-start gap-3 text-small leading-snug ${notif.color}`}
-                  >
-                    <div className="h-2 w-2 rounded-full bg-current shrink-0 mt-1.5 animate-pulse" />
-                    <div className="flex-1">{notif.text}</div>
-                  </div>
-                ))}
-              </Card.Body>
-            </Card>
-          </motion.div>
-
-          {/* Recent AI Advisor Conversations */}
-          <motion.div variants={itemVariants}>
-            <Card>
-              <Card.Header className="pb-3">
-                <h3 className="font-bold text-text-primary dark:text-white flex items-center gap-2">
-                  <MessageSquare size={18} className="text-brand-primary" /> Recent Conversations
-                </h3>
-              </Card.Header>
-              <Card.Body className="flex flex-col gap-3">
-                {mockConversations.map((chat) => (
-                  <div 
-                    key={chat.id} 
-                    className="p-4 rounded-xl border border-border-primary/5 hover:border-brand-primary/20 hover:bg-border-primary/2 transition-all cursor-pointer flex flex-col gap-1.5 group"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-text-primary dark:text-white text-small group-hover:text-brand-primary transition-colors">
-                        {chat.title}
-                      </span>
-                      <span className="text-[10px] text-text-secondary dark:text-text-muted">{chat.time}</span>
-                    </div>
-                    <p className="text-caption text-text-secondary dark:text-text-muted truncate">
-                      {chat.excerpt}
-                    </p>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" className="w-full mt-2">
-                  Open Assistant Session
-                </Button>
-              </Card.Body>
-            </Card>
-          </motion.div>
-
-        </div>
-
-      </div>
-    </motion.div>
+      {/* §9 Schemes, Testimonial, Photo grid & final CTA */}
+      <TestimonialSplit schemes={SCHEMES} />
+    </div>
   )
 }
+
+export default Dashboard

@@ -94,9 +94,10 @@ class Settings(BaseSettings):
 
     @property
     def REDIS_URL(self) -> str:  # noqa: N802
+        scheme = "rediss" if "upstash" in self.REDIS_HOST.lower() else "redis"
         if self.REDIS_PASSWORD:
-            return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
-        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+            return f"{scheme}://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+        return f"{scheme}://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
     # -------------------------------------------------------------------------
     # JWT Authentication
@@ -142,6 +143,9 @@ class Settings(BaseSettings):
 
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     OLLAMA_MODEL: str = "llama3.1:8b"
+
+    GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "meta-llama/llama-4-scout-17b-16e-instruct"
 
     # -------------------------------------------------------------------------
     # External APIs

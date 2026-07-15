@@ -1,83 +1,84 @@
 /**
- * KrishiMitra AI — Dashboard Layout
- * ====================================
+ * KrishiMitra AI — Premium Dashboard Layout
+ * ==========================================
  * Main authenticated application shell.
- * Renders: Sidebar (collapsible) + Navbar (sticky top) + main content area.
- * Sidebar collapse state is persisted in localStorage.
+ * IMPORTANT: <Outlet> is rendered FULL WIDTH — pages control their own max-width.
+ * This allows cinematic hero sections and full-bleed layouts to work correctly.
  */
 
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Sidebar } from '@/components/navigation/Sidebar'
-import { Navbar }  from '@/components/navigation/Navbar'
-import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { CACHE_KEYS } from '@/constants/config'
+import { Outlet, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Navbar } from '@/components/navigation/Navbar'
+import { MobileBottomNav } from '@/components/navigation/MobileBottomNav'
+import { CommandSearchModal } from '@/components/navigation/CommandSearchModal'
+import { NotificationCenter } from '@/components/navigation/NotificationCenter'
+import { AICompanionWidget } from '@/components/navigation/AICompanionWidget'
+import { ROUTES } from '@/constants/routes'
 
-const SIDEBAR_WIDTH     = 280
-const SIDEBAR_COLLAPSED = 72
+// Pages that need full-bleed layout (no padding/max-width constraints from layout)
+const FULL_BLEED_ROUTES = [
+  ROUTES.DASHBOARD,
+  ROUTES.MARKET.ROOT,
+  ROUTES.AI_ASSISTANT,
+  ROUTES.WEATHER.ROOT,
+  ROUTES.TRANSPORT.ROOT,
+  ROUTES.RECOMMENDATION.ROOT,
+  ROUTES.GOVERNMENT.ROOT,
+  ROUTES.PROFILE.ROOT,
+  ROUTES.SETTINGS.ROOT,
+]
 
 export function DashboardLayout() {
-  const [isCollapsed, setIsCollapsed] = useLocalStorage<boolean>(
-    CACHE_KEYS.SIDEBAR_COLLAPSED,
-    false,
-  )
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const location = useLocation()
 
-  const sidebarWidth = isCollapsed ? SIDEBAR_COLLAPSED : SIDEBAR_WIDTH
+  const isFullBleed = FULL_BLEED_ROUTES.some(r =>
+    location.pathname === r || location.pathname === '/'
+  )
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background dark:bg-background-dark">
-      {/* ── Mobile Overlay ─────────────────────────────────── */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+    <div className="min-h-screen bg-background dark:bg-background-dark flex flex-col relative overflow-x-hidden">
 
-      {/* ── Sidebar ────────────────────────────────────────── */}
-      <Sidebar
-        isCollapsed={isCollapsed}
-        mobileOpen={mobileOpen}
-        onCollapse={() => setIsCollapsed(!isCollapsed)}
-        onMobileClose={() => setMobileOpen(false)}
+      {/* Sticky Header Navigation — absolute on hero, sticky elsewhere */}
+      <Navbar
+        onSearchClick={() => setSearchOpen(true)}
+        onNotificationsClick={() => setNotificationsOpen(true)}
       />
 
-      {/* ── Main Area ──────────────────────────────────────── */}
-      <motion.div
-        className="flex flex-1 flex-col overflow-hidden"
-        animate={{ marginLeft: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        style={{ minWidth: 0 }}
-      >
-        {/* Navbar */}
-        <Navbar
-          sidebarWidth={sidebarWidth}
-          onMobileMenuOpen={() => setMobileOpen(true)}
-        />
-
-        {/* Page Content */}
-        <main
-          className="flex-1 overflow-y-auto"
-          style={{ paddingTop: '0' }}
+      {/* Main Content Area */}
+      <main className={`flex-1 w-full ${isFullBleed ? '' : 'pt-[88px]'} pb-24 lg:pb-8 flex flex-col`}>
+        <motion.div
+          key={location.pathname}
+          className={`w-full flex flex-col ${isFullBleed ? '' : 'max-w-content mx-auto px-4 sm:px-6 gap-6'}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <motion.div
-            key="page-content"
-            className="min-h-full p-6"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-          >
-            <Outlet />
-          </motion.div>
-        </main>
-      </motion.div>
+          <Outlet />
+        </motion.div>
+      </main>
+
+      {/* Mobile Bottom sticky bar */}
+      <MobileBottomNav />
+
+      {/* Keyboard-triggered Search overlay */}
+      <CommandSearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+
+      {/* Alert Center slide-out */}
+      <NotificationCenter
+        isOpen={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
+
+      {/* Global AI companion quick-chat bubble */}
+      <AICompanionWidget />
     </div>
   )
 }
+
+export default DashboardLayout

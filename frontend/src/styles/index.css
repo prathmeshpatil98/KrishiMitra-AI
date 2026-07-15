@@ -1,81 +1,78 @@
 /*
  * KrishiMitra AI — Global Design Tokens & Base Styles
  * =====================================================
- * All CSS custom properties (design tokens) for the KrishiMitra AI design system.
- * Every component consumes these tokens — never hardcode hex values in components.
- *
- * Dark mode: add class="dark" to <html> via ThemeProvider.
+ * Agricultural Premium Design System
+ * Farm Green (#1B4D1F) + Golden Amber (#F59E0B) + Cream (#FDF8F0)
  */
 
-/* ── Google Fonts ────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* ── Fonts ────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ──────────────────────────────────────────────────────────────
-   Design Tokens — Light Mode
+   Design Tokens — Light Mode (Agricultural)
 ────────────────────────────────────────────────────────────── */
 :root {
-  /* Brand */
-  --color-primary:     #2E7D32;
-  --color-primary-hover: #236126;
-  --color-secondary:   #81C784;
-  --color-accent:      #F9A825;
-  --color-accent-hover: #E89A1B;
+  /* Farm Brand */
+  --color-primary:         #1B4D1F;
+  --color-primary-hover:   #153D19;
+  --color-primary-light:   #2D6A31;
+  --color-gold:            #F59E0B;
+  --color-gold-dark:       #D97706;
+  --color-gold-light:      #FCD34D;
+  --color-cream:           #FDF8F0;
+  --color-cream-dark:      #F5EDD9;
 
   /* Semantic */
-  --color-success:  #16A34A;
-  --color-danger:   #DC2626;
-  --color-warning:  #D97706;
-  --color-info:     #2563EB;
+  --color-success:   #16A34A;
+  --color-danger:    #DC2626;
+  --color-warning:   #D97706;
+  --color-info:      #2563EB;
 
-  /* Surface */
-  --color-background: #F7F9F5;
-  --color-surface:    #FFFFFF;
-  --color-surface-raised: #FFFFFF;
-  --color-sidebar:    #1F2937;
-  --color-sidebar-item-hover: rgba(255,255,255,0.08);
-  --color-sidebar-item-active: rgba(46,125,50,0.25);
+  /* Surfaces */
+  --color-background:     #FDF8F0;
+  --color-surface:        #FFFFFF;
+  --color-surface-raised: #F9FAFB;
 
   /* Text */
   --color-text-primary:   #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-muted:     #9CA3AF;
+  --color-text-secondary: #374151;
+  --color-text-muted:     #6B7280;
   --color-text-inverse:   #FFFFFF;
-  --color-text-on-sidebar:#D1FAE5;
 
   /* Border */
-  --color-border:        #E5E7EB;
-  --color-border-focus:  #2E7D32;
-  --color-border-error:  #DC2626;
+  --color-border:       #E5E7EB;
+  --color-border-focus: #1B4D1F;
 
   /* Shadows */
-  --shadow-card:      0 4px 24px rgba(0,0,0,0.06);
-  --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.12);
-  --shadow-float:     0 16px 64px rgba(0,0,0,0.16);
-  --shadow-glow:      0 0 20px rgba(46,125,50,0.35);
+  --shadow-card:       0 1px 3px rgba(0,0,0,0.06), 0 4px 24px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.14);
+  --shadow-float:      0 20px 80px rgba(0,0,0,0.2);
+  --shadow-glow-green: 0 0 30px rgba(27,77,31,0.3);
+  --shadow-glow-gold:  0 0 24px rgba(245,158,11,0.4);
 
-  /* Border radius */
-  --radius-card:   16px;
+  /* Radii */
+  --radius-card:   20px;
   --radius-btn:    12px;
   --radius-input:  12px;
-  --radius-dialog: 20px;
-  --radius-badge:  6px;
+  --radius-pill:   999px;
 
   /* Layout */
-  --sidebar-width:           280px;
-  --sidebar-collapsed-width: 72px;
-  --navbar-height:           72px;
+  --navbar-height: 72px;
 
   /* Transitions */
-  --transition-fast:   150ms ease-out;
-  --transition-normal: 250ms ease-out;
-  --transition-slow:   350ms ease-out;
+  --ease-spring:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-smooth:  cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast:   150ms var(--ease-smooth);
+  --transition-normal: 280ms var(--ease-smooth);
+  --transition-slow:   400ms var(--ease-smooth);
 
   /* Backdrop */
-  --backdrop-blur: blur(12px);
+  --backdrop-blur:       blur(16px);
+  --backdrop-blur-heavy: blur(24px);
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -83,37 +80,32 @@
 ────────────────────────────────────────────────────────────── */
 .dark {
   --color-primary:       #4ADE80;
-  --color-primary-hover: #34D058;
-  --color-secondary:     #166534;
-  --color-accent:        #F9A825;
+  --color-primary-hover: #22C55E;
+  --color-gold:          #FBBF24;
+  --color-cream:         #0D1A0E;
 
-  --color-background:  #0F1117;
-  --color-surface:     #1A1F2E;
-  --color-surface-raised: #232838;
-  --color-sidebar:     #111827;
-  --color-sidebar-item-hover:  rgba(255,255,255,0.06);
-  --color-sidebar-item-active: rgba(74,222,128,0.15);
+  --color-background:     #0A100B;
+  --color-surface:        #111A12;
+  --color-surface-raised: #18261A;
 
-  --color-text-primary:   #F9FAFB;
-  --color-text-secondary: #9CA3AF;
-  --color-text-muted:     #6B7280;
-  --color-text-on-sidebar:#D1FAE5;
+  --color-text-primary:   #F0FDF4;
+  --color-text-secondary: #86EFAC;
+  --color-text-muted:     #4B7855;
 
-  --color-border:       #2D3748;
+  --color-border:       #1E3A20;
   --color-border-focus: #4ADE80;
 
-  --shadow-card:      0 4px 24px rgba(0,0,0,0.3);
+  --shadow-card:       0 1px 3px rgba(0,0,0,0.3), 0 4px 24px rgba(0,0,0,0.3);
   --shadow-card-hover: 0 8px 40px rgba(0,0,0,0.5);
-  --shadow-float:     0 16px 64px rgba(0,0,0,0.6);
-  --shadow-glow:      0 0 20px rgba(74,222,128,0.3);
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Base Reset & Defaults
+   Base Reset
 ────────────────────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
+    margin: 0;
   }
 
   html {
@@ -121,109 +113,231 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-text-primary);
-    transition: background-color var(--transition-normal), color var(--transition-normal);
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* Focus ring — accessible, non-default */
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     border-radius: 4px;
   }
+  :focus:not(:focus-visible) { outline: none; }
 
-  /* Remove focus ring for mouse users */
-  :focus:not(:focus-visible) {
-    outline: none;
-  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
 
-  /* Scrollbar — subtle, consistent */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-    border-radius: 99px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-muted);
-  }
-
-  /* Selection */
   ::selection {
-    background-color: rgba(46,125,50,0.2);
+    background-color: rgba(27,77,31,0.15);
     color: var(--color-text-primary);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.2;
-    color: var(--color-text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
   }
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Reusable Component Layer Classes
+   Component Utilities
 ────────────────────────────────────────────────────────────── */
 @layer components {
-  /* Glass morphism surface */
+
+  /* ── Glass Surfaces ─────────────────────────────────────────── */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     border: 1px solid rgba(255,255,255,0.3);
   }
-
   .dark .glass {
-    background: rgba(26, 31, 46, 0.7);
+    background: rgba(17, 26, 18, 0.7);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .glass-dark {
+    background: rgba(15, 26, 15, 0.7);
+    backdrop-filter: var(--backdrop-blur-heavy);
+    -webkit-backdrop-filter: var(--backdrop-blur-heavy);
     border: 1px solid rgba(255,255,255,0.08);
   }
 
-  /* Page container */
-  .page-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
+  /* ── Gradient Text ──────────────────────────────────────────── */
+  .gradient-text-green {
+    background: linear-gradient(135deg, #1B4D1F 0%, #2D6A31 50%, #6B8F4F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-
-  /* Gradient text */
-  .gradient-text {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 50%, #F59E0B 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Shimmer skeleton */
-  .skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--color-border) 25%,
-      rgba(255,255,255,0.5) 50%,
-      var(--color-border) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.6s linear infinite;
-    border-radius: var(--radius-input);
+  /* ── Farm Gold Badge Circle (like DonaLFarm) ────────────────── */
+  .gold-badge-circle {
+    width: 72px;
+    height: 72px;
+    background: #F59E0B;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.35);
+    color: #1B4D1F;
+    font-size: 28px;
+    flex-shrink: 0;
   }
 
-  .dark .skeleton {
-    background: linear-gradient(
-      90deg,
-      rgba(45,55,72,1) 25%,
-      rgba(74,85,104,0.5) 50%,
-      rgba(45,55,72,1) 75%
-    );
+  /* ── Farm Service Card (dark green) ─────────────────────────── */
+  .farm-service-card {
+    background: #1B4D1F;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: transform 300ms var(--ease-smooth), box-shadow 300ms var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+  .farm-service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(245,158,11,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .farm-service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 60px rgba(27,77,31,0.3);
+  }
+
+  /* ── Gold underline accent (like DonaLFarm) ─────────────────── */
+  .gold-underline {
+    width: 48px;
+    height: 3px;
+    background: #F59E0B;
+    border-radius: 2px;
+  }
+
+  /* ── Organic wave separator ─────────────────────────────────── */
+  .wave-top {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: #FDF8F0;
+    clip-path: ellipse(55% 100% at 50% 0%);
+  }
+  .wave-bottom {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: #FDF8F0;
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  /* ── Section eyebrow label ──────────────────────────────────── */
+  .section-eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    color: #F59E0B;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* ── Pill CTA button (DonaLFarm style) ──────────────────────── */
+  .btn-farm-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #1B4D1F;
+    color: white;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    border: 2px solid #1B4D1F;
+    transition: all 280ms var(--ease-smooth);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-farm-primary:hover {
+    background: #153D19;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(27,77,31,0.3);
+  }
+  .btn-farm-primary .arrow-circle {
+    width: 32px; height: 32px;
+    background: #F59E0B;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 280ms var(--ease-spring);
+  }
+  .btn-farm-primary:hover .arrow-circle {
+    transform: translateX(4px);
+  }
+
+  .btn-farm-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: transparent;
+    color: white;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    transition: all 280ms var(--ease-smooth);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-farm-outline:hover {
+    border-color: white;
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+  }
+
+  /* ── Skeleton ────────────────────────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(90deg, #E5E7EB 25%, rgba(255,255,255,0.5) 50%, #E5E7EB 75%);
     background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+    border-radius: 8px;
+  }
+  .dark .skeleton {
+    background: linear-gradient(90deg, rgba(30,58,32,1) 25%, rgba(50,78,52,0.4) 50%, rgba(30,58,32,1) 75%);
+    background-size: 200% 100%;
+  }
+
+  /* ── No scrollbar ────────────────────────────────────────────── */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Wheat SVG decoration ────────────────────────────────────── */
+  .wheat-icon {
+    color: #F59E0B;
+    opacity: 0.8;
   }
 }
 
@@ -231,11 +345,158 @@
    Utility Layer
 ────────────────────────────────────────────────────────────── */
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+  .section-pad    { padding-top: 6rem; padding-bottom: 6rem; }
+  .section-pad-xl { padding-top: 9rem; padding-bottom: 9rem; }
+  .container-farm {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────
+   Global Keyframes
+────────────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes fade-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes wheat-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%       { transform: rotate(4deg); }
+}
+@keyframes tick-in {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes particle-rise {
+  0%   { opacity: 0;   transform: translateY(0)    scale(0.8); }
+  50%  { opacity: 0.5; }
+  100% { opacity: 0;   transform: translateY(-60px) scale(1.2); }
+}
+
+/* Marquee price ticker */
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Particle */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particle-rise linear infinite;
+  pointer-events: none;
+}
+
+/* Float element */
+.float-el {
+  animation: float ease-in-out infinite;
+}
+
+/* ── Premium Mesh Gradients ── */
+.mesh-gradient-light {
+  background-color: #FDF8F0;
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(27, 77, 31, 0.04) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(245, 158, 11, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(45, 106, 49, 0.03) 0px, transparent 50%);
+}
+
+.dark .mesh-gradient-dark {
+  background-color: #0A100B;
+  background-image: 
+    radial-gradient(at 10% 20%, rgba(74, 222, 128, 0.05) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(251, 191, 36, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 80%, rgba(30, 58, 32, 0.06) 0px, transparent 50%);
+}
+
+/* ── Premium Glass Panels ── */
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass-panel-dark {
+  background: rgba(17, 26, 18, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.02);
+}
+
+/* ── Noise Overlay ── */
+.noise-bg {
+  position: relative;
+}
+.noise-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.015;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ── Premium Scroll Progress Bar ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #F59E0B, #1B4D1F, #4ADE80);
+  transform-origin: 0%;
+  z-index: 100;
+}
+
+/* ── Hover Glow Actions ── */
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* ── Interactive Focus indicators ── */
+.focus-ring {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.focus-ring:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(27, 77, 31, 0.15);
+}
+.dark .focus-ring:focus-visible {
+  border-color: var(--color-primary-focus);
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+}
+

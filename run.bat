@@ -20,16 +20,15 @@ echo.
 echo [IMPORTANT] Prerequisites:
 echo 1. Ensure PostgreSQL is running locally (default: localhost:5432).
 echo 2. Ensure Redis is running locally (default: localhost:6379).
-echo 3. Configure your local configuration inside 'backend/.env'.
 echo.
-echo Press any key to launch KrishiMitra AI services...
+echo Press any key to run migrations and start all services...
 pause > nul
 
 echo.
 echo ---------------------------------------------------------------------
-echo [1/2] Launching Backend FastAPI Service...
+echo [1/2] Preparing Database & Launching Backend FastAPI Service...
 echo ---------------------------------------------------------------------
-start "KrishiMitra Backend" cmd /k "cd backend && (if exist venv\Scripts\activate.bat (echo Activating virtual environment... && call venv\Scripts\activate.bat)) && python main.py"
+start "KrishiMitra Backend" cmd /k "cd backend && (if exist venv\Scripts\activate.bat (echo Activating virtual environment... && call venv\Scripts\activate.bat)) && echo Running database migrations... && python -m alembic upgrade head && echo Starting backend server... && python main.py"
 
 echo.
 echo ---------------------------------------------------------------------

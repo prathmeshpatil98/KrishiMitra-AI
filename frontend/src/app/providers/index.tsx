@@ -12,6 +12,7 @@ import type { ReactNode } from 'react'
 import { QueryProvider } from './QueryProvider'
 import { ThemeProvider }  from './ThemeProvider'
 import { AuthProvider }   from './AuthProvider'
+import { LanguageProvider } from './LanguageProvider'
 
 interface ProvidersProps {
   children: ReactNode
@@ -20,11 +21,13 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </QueryProvider>
   )
 }

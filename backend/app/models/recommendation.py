@@ -34,7 +34,7 @@ class Recommendation(BaseModel):
 
     crop_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("crops.id", ondelete="SET_NULL"),
+        ForeignKey("crops.id", ondelete="SET NULL"),
         nullable=True,
         index=True,
         comment="Reference to specific crop evaluated",

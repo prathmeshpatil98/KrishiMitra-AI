@@ -207,7 +207,7 @@ def upgrade() -> None:
         "recommendations",
         sa.Column("id", sa.String(36), primary_key=True, index=True),
         sa.Column("farmer_id", sa.String(36), sa.ForeignKey("farmer_profiles.id", ondelete="CASCADE"), nullable=False, index=True),
-        sa.Column("crop_id", sa.String(36), sa.ForeignKey("crops.id", ondelete="SET_NULL"), nullable=True, index=True),
+        sa.Column("crop_id", sa.String(36), sa.ForeignKey("crops.id", ondelete="SET NULL"), nullable=True, index=True),
         sa.Column("recommended_market", sa.String(255), nullable=True),
         sa.Column("expected_profit", sa.Float(), nullable=True),
         sa.Column("transport_cost", sa.Float(), nullable=True),
@@ -329,7 +329,7 @@ def upgrade() -> None:
         sa.Column("method", sa.String(10), nullable=False),
         sa.Column("status_code", sa.Integer(), nullable=False),
         sa.Column("execution_time", sa.Float(), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="SET_NULL"), nullable=True, index=True),
+        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True),
         sa.Column("request_id", sa.String(36), nullable=True, index=True),
         # Audit Columns
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
@@ -390,7 +390,7 @@ def upgrade() -> None:
         sa.Column("action", sa.String(50), nullable=False),
         sa.Column("old_value", sa.JSON(), nullable=True),
         sa.Column("new_value", sa.JSON(), nullable=True),
-        sa.Column("performed_by", sa.String(36), sa.ForeignKey("users.id", ondelete="SET_NULL"), nullable=True, index=True),
+        sa.Column("performed_by", sa.String(36), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True),
         sa.Column("performed_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),
         # Audit Columns
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=func.now()),

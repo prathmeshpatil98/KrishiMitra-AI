@@ -27,8 +27,20 @@ import { useAuthContext }  from '@/app/providers/AuthProvider'
 
 const LazyDashboard       = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.Dashboard })))
 const LazyAssistant       = lazy(() => import('@/pages/Assistant').then(m => ({ default: m.Assistant })))
+const LazyMarket          = lazy(() => import('@/pages/Market').then(m => ({ default: m.Market })))
+const LazyWeather         = lazy(() => import('@/pages/Weather').then(m => ({ default: m.Weather })))
+const LazyRecommendation  = lazy(() => import('@/pages/Recommendation').then(m => ({ default: m.Recommendation })))
+const LazyTransport       = lazy(() => import('@/pages/Transport').then(m => ({ default: m.Transport })))
+const LazyGovernment      = lazy(() => import('@/pages/Government').then(m => ({ default: m.Government })))
+const LazySettings        = lazy(() => import('@/pages/Settings').then(m => ({ default: m.Settings })))
 const LazyLogin           = lazy(() => import('@/pages/auth/Login').then(m => ({ default: m.Login })))
+const LazyRegister        = lazy(() => import('@/pages/auth/Register').then(m => ({ default: m.Register })))
+const LazyForgot          = lazy(() => import('@/pages/auth/Forgot').then(m => ({ default: m.Forgot })))
 const LazyNotFound        = lazy(() => import('@/pages/NotFound').then(m => ({ default: m.NotFound })))
+
+function SuspenseWrapper({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<PageLoader />}>{children}</Suspense>
+}
 
 // ── Route Guards ─────────────────────────────────────────────────────────────
 
@@ -46,10 +58,6 @@ function RequireGuest() {
   return <Outlet />
 }
 
-function SuspenseWrapper({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<PageLoader />}>{children}</Suspense>
-}
-
 // ── Route Tree ────────────────────────────────────────────────────────────────
 const routes: RouteObject[] = [
   // ── Auth routes (unauthenticated only) ─────────────────────
@@ -62,6 +70,14 @@ const routes: RouteObject[] = [
           {
             path: ROUTES.AUTH.LOGIN,
             element: <SuspenseWrapper><LazyLogin /></SuspenseWrapper>,
+          },
+          {
+            path: ROUTES.AUTH.REGISTER,
+            element: <SuspenseWrapper><LazyRegister /></SuspenseWrapper>,
+          },
+          {
+            path: ROUTES.AUTH.FORGOT,
+            element: <SuspenseWrapper><LazyForgot /></SuspenseWrapper>,
           },
         ],
       },
@@ -90,13 +106,13 @@ const routes: RouteObject[] = [
 
           // Feature pages — slots for Phase 2 implementation
           { path: ROUTES.AI_ASSISTANT,       element: <SuspenseWrapper><LazyAssistant /></SuspenseWrapper> },
-          { path: ROUTES.MARKET.ROOT,        element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.WEATHER.ROOT,       element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.TRANSPORT.ROOT,     element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.RECOMMENDATION.ROOT,element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.GOVERNMENT.ROOT,    element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.PROFILE.ROOT,       element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
-          { path: ROUTES.SETTINGS.ROOT,      element: <SuspenseWrapper><LazyDashboard /></SuspenseWrapper> },
+          { path: ROUTES.MARKET.ROOT,        element: <SuspenseWrapper><LazyMarket /></SuspenseWrapper> },
+          { path: ROUTES.WEATHER.ROOT,       element: <SuspenseWrapper><LazyWeather /></SuspenseWrapper> },
+          { path: ROUTES.TRANSPORT.ROOT,     element: <SuspenseWrapper><LazyTransport /></SuspenseWrapper> },
+          { path: ROUTES.RECOMMENDATION.ROOT,element: <SuspenseWrapper><LazyRecommendation /></SuspenseWrapper> },
+          { path: ROUTES.GOVERNMENT.ROOT,    element: <SuspenseWrapper><LazyGovernment /></SuspenseWrapper> },
+          { path: ROUTES.PROFILE.ROOT,       element: <SuspenseWrapper><LazySettings /></SuspenseWrapper> },
+          { path: ROUTES.SETTINGS.ROOT,      element: <SuspenseWrapper><LazySettings /></SuspenseWrapper> },
         ],
       },
     ],
