@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Check } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Check, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/Input'
@@ -34,6 +34,8 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   // System Diagnostics steps:
   // 0: System Loader, 1: Credentials card
@@ -72,11 +74,42 @@ export function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true)
     try {
+      // Check if backend is online with a quick health request (timeout 600ms)
+      let isBackendOnline = false
       try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 600)
+        const response = await fetch('/api/v1/health', { signal: controller.signal })
+        clearTimeout(timeoutId)
+        if (response.ok) {
+          isBackendOnline = true
+        }
+      } catch {
+        // Backend is offline
+      }
+
+      if (isBackendOnline) {
+        // If backend is online, authenticate against it directly
         await login(data)
         navigate(ROUTES.DASHBOARD)
-      } catch (err: any) {
+      } else {
+        // If backend is offline, simulate login check for DEV mode
         if (import.meta.env.DEV) {
+          // Check if credentials are valid (default or registered)
+          const isDefault = data.email === 'farmer@krishimitra.ai' && data.password === 'password123'
+          
+          let matchedUser: any = null
+          try {
+            const registeredUsers = JSON.parse(localStorage.getItem('krishimitra_registered_users') || '[]')
+            matchedUser = registeredUsers.find((u: any) => u.email === data.email && u.password === data.password)
+          } catch (e) {
+            console.error('Failed to read registered users from localStorage:', e)
+          }
+
+          if (!isDefault && !matchedUser) {
+            throw new Error('Invalid email or password. Please try again.')
+          }
+
           toast.warning('Server offline. Simulating credentials audit with local session cache.')
           
           const mockUser = {
@@ -89,7 +122,7 @@ export function Login() {
             created_at: new Date().toISOString(),
             farmer_profile: {
               id: 'mock-profile-uuid',
-              full_name: 'Pratiksha Tiwari',
+              full_name: matchedUser ? matchedUser.name : 'Pratiksha Tiwari',
               state: 'Maharashtra',
               district: 'Kolhapur',
             }
@@ -101,13 +134,14 @@ export function Login() {
           
           setTimeout(() => {
             window.location.href = ROUTES.DASHBOARD
-          }, 1000)
+          }, 500)
         } else {
-          throw err
+          throw new Error('Backend server is offline. Please try again later.')
         }
       }
     } catch (err: any) {
-      toast.error(err.message || 'Login failed. Please check your credentials.')
+      setErrorMessage(err.message || 'Login failed. Please check your credentials.')
+      setShowErrorModal(true)
     } finally {
       setLoading(false)
     }
@@ -351,6 +385,58 @@ export function Login() {
               </a>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Error Modal Popup ── */}
+      <AnimatePresence>
+        {showErrorModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowErrorModal(false)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+            />
+            
+            {/* Modal Box */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+              className="relative w-full max-w-md bg-slate-900/90 border border-red-500/20 rounded-3xl p-6 shadow-2xl shadow-red-500/5 backdrop-blur-xl text-center overflow-hidden z-10"
+            >
+              {/* Top ambient glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-red-500/10 rounded-full blur-[48px] pointer-events-none" />
+
+              {/* Warning Icon */}
+              <div className="mx-auto w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 relative z-10">
+                <AlertCircle size={28} className="text-red-500 animate-bounce" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-lg font-black uppercase tracking-wider text-white mb-2 relative z-10 font-display">
+                Authentication Failed
+              </h3>
+
+              {/* Message */}
+              <p className="text-[14px] leading-relaxed text-zinc-300 mb-6 font-semibold relative z-10 px-2">
+                {errorMessage}
+              </p>
+
+              {/* Try Again Button */}
+              <button
+                type="button"
+                onClick={() => setShowErrorModal(false)}
+                className="w-full py-3.5 bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-wider text-[12px] rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer shadow-lg shadow-red-500/20"
+              >
+                Try Again
+              </button>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

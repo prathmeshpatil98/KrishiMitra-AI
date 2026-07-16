@@ -55,6 +55,35 @@ async def init_db() -> None:
             row = result.scalar_one()
             assert row == 1, "Database connectivity check failed"  # noqa: S101
 
+        # Seed default user if not exists
+        from sqlalchemy import select
+        from app.models.user import User
+        from app.security.hashing import PasswordHasher
+        from app.database.session import get_async_session_factory
+
+        session_factory = get_async_session_factory()
+        async with session_factory() as session:
+            try:
+                result = await session.execute(select(User).where(User.email == "farmer@krishimitra.ai"))
+                db_user = result.scalar_one_or_none()
+                if not db_user:
+                    hashed_pwd = PasswordHasher.hash_password("password123")
+                    new_user = User(
+                        full_name="Pratiksha Tiwari",
+                        email="farmer@krishimitra.ai",
+                        phone="9999999999",
+                        password_hash=hashed_pwd,
+                        role="farmer",
+                        is_active=True,
+                        is_verified=True,
+                    )
+                    session.add(new_user)
+                    await session.commit()
+                    logger.info("seeded_default_user", email="farmer@krishimitra.ai")
+            except Exception as seed_exc:
+                logger.error("database_seeding_failed", error=str(seed_exc))
+                await session.rollback()
+
         logger.info("database_init_completed")
     except Exception as exc:
         logger.error("database_init_failed", error=str(exc), exc_info=True)

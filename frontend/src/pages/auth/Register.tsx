@@ -58,6 +58,26 @@ export function Register() {
         role: 'farmer'
       }
       sessionStorage.setItem('krishimitra_registered_demo', JSON.stringify(mockRegisterUser))
+
+      // Persist in localStorage for login validation in mock mode
+      try {
+        const registeredUsers = JSON.parse(localStorage.getItem('krishimitra_registered_users') || '[]')
+        const existingIdx = registeredUsers.findIndex((u: any) => u.email === data.email)
+        const newUser = {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: 'farmer' as const
+        }
+        if (existingIdx > -1) {
+          registeredUsers[existingIdx] = newUser
+        } else {
+          registeredUsers.push(newUser)
+        }
+        localStorage.setItem('krishimitra_registered_users', JSON.stringify(registeredUsers))
+      } catch (e) {
+        console.error('Failed to save registered user to localStorage:', e)
+      }
       
       navigate(ROUTES.AUTH.LOGIN)
     } catch {
